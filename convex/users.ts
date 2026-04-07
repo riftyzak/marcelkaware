@@ -13,6 +13,25 @@ function normalizeHandle(input: string) {
     .slice(0, 24);
 }
 
+async function findAvailableHandle(ctx: any, preferred: string, excludeUserId?: any) {
+  const base = normalizeHandle(preferred) || "member";
+
+  for (let attempt = 1; attempt <= 1000; attempt += 1) {
+    const suffix = attempt === 1 ? "" : `-${attempt}`;
+    const candidate = `${base.slice(0, Math.max(1, 24 - suffix.length))}${suffix}`;
+    const matches = await ctx.db
+      .query("users")
+      .withIndex("handle", (q: any) => q.eq("handle", candidate))
+      .take(5);
+
+    if (matches.every((match: any) => match._id === excludeUserId)) {
+      return candidate;
+    }
+  }
+
+  throw new Error("Unable to generate a unique handle.");
+}
+
 export const ensureViewerDefaults = mutation({
   args: {},
   handler: async (ctx) => {
@@ -27,12 +46,13 @@ export const ensureViewerDefaults = mutation({
     const fallbackHandle = normalizeHandle(
       user.handle ?? user.displayName ?? user.name ?? user.email?.split("@")[0] ?? `user-${userId}`,
     );
+    const uniqueHandle = await findAvailableHandle(ctx, user.handle ?? fallbackHandle, userId);
     await ctx.db.patch(userId, {
       role: user.role ?? "registered",
       accountState: user.accountState ?? "active",
       joinedAt: user.joinedAt ?? Date.now(),
       displayName: user.displayName ?? user.name ?? user.email ?? "Member",
-      handle: user.handle ?? fallbackHandle,
+      handle: uniqueHandle,
       lastSeenAt: Date.now(),
     });
     return userId;

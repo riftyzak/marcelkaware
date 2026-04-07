@@ -3,6 +3,7 @@
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
+import { authConfig } from "@/lib/config/auth";
 import { siteConfig } from "@/lib/config/site";
 import { api } from "../../../convex/_generated/api";
 import { useAction, useConvexAuth } from "convex/react";
@@ -84,14 +85,19 @@ export function PricingCard() {
           </div>
         ) : (
           <div className="space-y-3">
-            <p className="text-sm text-slate-400">Create an account first.</p>
+            <p className="text-sm text-slate-400">Sign in to continue to purchase.</p>
             <div className="grid gap-3 sm:grid-cols-2">
-              <Link href="/register">
-                <Button className="w-full">Register</Button>
-              </Link>
               <Link href="/login">
-                <Button className="w-full" variant="secondary">Login</Button>
+                <Button className="w-full">Login</Button>
               </Link>
+              <Button
+                className="w-full border-0 bg-[#8fb0d8]/45 text-[#dbe7f5] hover:bg-[#8fb0d8]/45"
+                disabled
+                title={authConfig.registrationDisabledMessage}
+                variant="primary"
+              >
+                Register
+              </Button>
             </div>
           </div>
         )}

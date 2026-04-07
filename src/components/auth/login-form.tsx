@@ -1,86 +1,14 @@
-"use client";
+"use client"
 
-import { useAuthActions } from "@convex-dev/auth/react";
-import Link from "next/link";
-import { useRouter } from "next/navigation";
-import { useState } from "react";
-import { Button } from "@/components/ui/button";
-import { Card } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
+import { AuthPanel } from "@/components/auth/auth-panel"
 
-export function LoginForm() {
-  const router = useRouter();
-  const { signIn } = useAuthActions();
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [error, setError] = useState<string | null>(null);
-  const [pending, setPending] = useState(false);
+type LoginFormProps = {
+  notice?: string | null
+  redirectTo?: string
+  compact?: boolean
+  onSuccess?: () => void
+}
 
-  async function onSubmit(event: React.FormEvent<HTMLFormElement>) {
-    event.preventDefault();
-    try {
-      setPending(true);
-      setError(null);
-      const result = await signIn("password", {
-        email,
-        password,
-        flow: "signIn",
-      });
-      if (result.signingIn) {
-        router.push("/app");
-      }
-    } catch (cause) {
-      setError(cause instanceof Error ? cause.message : "Unable to sign in.");
-    } finally {
-      setPending(false);
-    }
-  }
-
-  return (
-    <Card className="mx-auto max-w-md">
-      <form className="space-y-4" onSubmit={onSubmit}>
-        <div className="space-y-1">
-          <h1 className="text-2xl font-semibold text-white">Account access</h1>
-          <p className="text-sm text-slate-400">Use your account credentials to access downloads, entitlement state, and device linking.</p>
-        </div>
-        <div className="space-y-2">
-          <label className="text-sm text-slate-300" htmlFor="email">
-            Email
-          </label>
-          <Input
-            autoComplete="email"
-            id="email"
-            onChange={(event) => setEmail(event.target.value)}
-            required
-            type="email"
-            value={email}
-          />
-        </div>
-        <div className="space-y-2">
-          <label className="text-sm text-slate-300" htmlFor="password">
-            Password
-          </label>
-          <Input
-            autoComplete="current-password"
-            id="password"
-            minLength={10}
-            onChange={(event) => setPassword(event.target.value)}
-            required
-            type="password"
-            value={password}
-          />
-        </div>
-        {error ? <p className="text-sm text-red-300">{error}</p> : null}
-        <Button className="w-full" disabled={pending} type="submit">
-          {pending ? "Signing in..." : "Sign in"}
-        </Button>
-        <p className="text-sm text-slate-400">
-          New here?{" "}
-          <Link className="text-cyan-300 hover:text-cyan-200" href="/register">
-            Create an account
-          </Link>
-        </p>
-      </form>
-    </Card>
-  );
+export function LoginForm({ notice, redirectTo, compact, onSuccess }: LoginFormProps) {
+  return <AuthPanel compact={compact} notice={notice} onSuccess={onSuccess} redirectTo={redirectTo} />
 }

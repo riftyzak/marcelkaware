@@ -1,7 +1,7 @@
 "use node";
 
 import Stripe from "stripe";
-import { createHash, createHmac } from "node:crypto";
+import { createHash, createHmac, randomBytes, timingSafeEqual } from "node:crypto";
 import { getAuthUserId } from "@convex-dev/auth/server";
 import { action, internalAction } from "./_generated/server";
 import { internal } from "./_generated/api";
@@ -20,6 +20,10 @@ function getStripeClient() {
   return new Stripe(requireEnv("STRIPE_SECRET_KEY"), {
     apiVersion: "2026-02-25.clover",
   });
+}
+
+function createOpaqueCheckoutReference() {
+  return `ccr_${randomBytes(18).toString("hex")}`;
 }
 
 export const createStripeCheckoutSession = action({
@@ -101,18 +105,24 @@ export const createHostedCryptoCheckout = action({
     }
 
     const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000";
+    const reference = createOpaqueCheckoutReference();
+    const returnUrl = `${siteUrl}${args.returnPath ?? "/app"}`;
+    await ctx.runMutation(internal.payments.createCryptoCheckoutReference, {
+      reference,
+      userId,
+      returnUrl,
+    });
     const url = new URL(checkoutBase);
-    url.searchParams.set("userId", String(userId));
-    url.searchParams.set("email", user?.email ?? "");
-    url.searchParams.set("returnUrl", `${siteUrl}${args.returnPath ?? "/app"}`);
+    url.searchParams.set("checkoutRef", reference);
+    url.searchParams.set("returnUrl", returnUrl);
 
     await ctx.runMutation(internal.audit.record, {
       actorUserId: userId,
       actorType: "user",
       action: "payments.crypto.checkoutCreated",
       targetTable: "payments",
-      targetId: String(userId),
-      metadata: { checkoutUrl: url.toString() },
+      targetId: reference,
+      metadata: { checkoutRef: reference, provider: "crypto" },
     });
 
     return { ok: true, url: url.toString(), message: "" };
@@ -237,7 +247,13 @@ export const processCryptoWebhook = internalAction({
     const computedSignature = createHmac("sha256", secret)
       .update(args.rawBody)
       .digest("hex");
-    if (computedSignature !== args.signature) {
+    const receivedSignature = args.signature.trim();
+    const computedBuffer = Buffer.from(computedSignature, "utf8");
+    const receivedBuffer = Buffer.from(receivedSignature, "utf8");
+    if (
+      computedBuffer.length !== receivedBuffer.length ||
+      !timingSafeEqual(computedBuffer, receivedBuffer)
+    ) {
       throw new Error("Invalid signature.");
     }
 
@@ -245,16 +261,24 @@ export const processCryptoWebhook = internalAction({
       eventId: string;
       eventType: string;
       userId?: string;
+      checkoutRef?: string;
+      reference?: string;
       transactionId?: string;
       status: "pending" | "confirmed" | "failed" | "expired" | "canceled";
       amountCents: number;
       currency: string;
     };
+    const checkoutReference = body.checkoutRef ?? body.reference;
+    const checkoutRecord = checkoutReference
+      ? await ctx.runQuery(internal.payments.resolveCryptoCheckoutReference, {
+          reference: checkoutReference,
+        })
+      : null;
 
     await ctx.runMutation(internal.payments.recordCryptoEvent, {
       eventId: body.eventId,
       eventType: body.eventType,
-      userId: body.userId as any,
+      userId: checkoutRecord?.userId ?? (body.userId as any),
       status: body.status,
       amountCents: body.amountCents,
       currency: body.currency,

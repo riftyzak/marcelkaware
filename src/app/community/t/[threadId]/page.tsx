@@ -1,3 +1,4 @@
+import { CommunityAuthGate } from "@/components/community/community-auth-gate";
 import { CommunityThreadView } from "@/components/community/community-thread-view";
 
 export default async function CommunityThreadPage({
@@ -6,5 +7,9 @@ export default async function CommunityThreadPage({
   params: Promise<{ threadId: string }>;
 }) {
   const { threadId } = await params;
-  return <CommunityThreadView threadId={threadId} />;
+  return (
+    <CommunityAuthGate>
+      <CommunityThreadView threadId={threadId} />
+    </CommunityAuthGate>
+  );
 }

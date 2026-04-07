@@ -3,6 +3,7 @@ import { v } from "convex/values";
 import { internal } from "./_generated/api";
 import { mutation, query } from "./_generated/server";
 import {
+  assertAuthenticatedAccountAccess,
   assertForumCategoryManageAccess,
   assertForumCategoryViewAccess,
   assertForumModerationAccess,
@@ -135,6 +136,14 @@ export const categoryIndex = query({
   args: {},
   handler: async (ctx) => {
     const viewer = await getViewerState(ctx);
+    if (viewer.tier === "guest") {
+      return {
+        ok: false,
+        message: "Authentication required.",
+        viewerTier: viewer.tier,
+        items: [] as any[],
+      };
+    }
     if (viewer.tier === "banned") {
       return {
         ok: false,
@@ -204,6 +213,17 @@ export const publicPortalOverview = query({
   args: {},
   handler: async (ctx) => {
     const viewer = await getViewerState(ctx);
+
+    if (viewer.tier === "guest") {
+      return {
+        ok: false,
+        message: "Authentication required.",
+        viewerTier: viewer.tier,
+        categories: [] as any[],
+        recentThreads: [] as any[],
+        totals: { visibleCategories: 0, visibleThreads: 0 },
+      };
+    }
 
     if (viewer.tier === "banned") {
       return {
@@ -343,6 +363,15 @@ export const categoryDetail = query({
   },
   handler: async (ctx, args) => {
     const viewer = await getViewerState(ctx);
+    try {
+      assertAuthenticatedAccountAccess(viewer.tier);
+    } catch (error) {
+      return {
+        ok: false,
+        message: error instanceof Error ? error.message : "Authentication required.",
+        category: null,
+      };
+    }
     if (viewer.tier === "banned") {
       return {
         ok: false,
@@ -447,6 +476,15 @@ export const threadDetail = query({
   },
   handler: async (ctx, args) => {
     const viewer = await getViewerState(ctx);
+    try {
+      assertAuthenticatedAccountAccess(viewer.tier);
+    } catch (error) {
+      return {
+        ok: false,
+        message: error instanceof Error ? error.message : "Authentication required.",
+        thread: null,
+      };
+    }
     if (viewer.tier === "banned") {
       return {
         ok: false,
@@ -553,6 +591,15 @@ export const memberProfile = query({
   },
   handler: async (ctx, args) => {
     const viewer = await getViewerState(ctx);
+    try {
+      assertAuthenticatedAccountAccess(viewer.tier);
+    } catch (error) {
+      return {
+        ok: false,
+        message: error instanceof Error ? error.message : "Authentication required.",
+        profile: null,
+      };
+    }
     if (viewer.tier === "banned") {
       return {
         ok: false,

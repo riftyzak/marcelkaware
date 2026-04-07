@@ -1,3 +1,4 @@
+import { CommunityAuthGate } from "@/components/community/community-auth-gate";
 import { MemberProfileCard } from "@/components/community/member-profile-card";
 
 export default async function MemberProfilePage({
@@ -6,5 +7,9 @@ export default async function MemberProfilePage({
   params: Promise<{ handle: string }>;
 }) {
   const { handle } = await params;
-  return <MemberProfileCard handle={handle} />;
+  return (
+    <CommunityAuthGate>
+      <MemberProfileCard handle={handle} />
+    </CommunityAuthGate>
+  );
 }

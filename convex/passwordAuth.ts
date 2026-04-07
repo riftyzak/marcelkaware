@@ -12,6 +12,7 @@ import type { GenericDoc } from "@convex-dev/auth/server";
 import type { GenericDataModel, WithoutSystemFields, DocumentByName } from "convex/server";
 import type { Value } from "convex/values";
 import { Scrypt } from "lucia";
+import { internal } from "./_generated/api";
 
 type PasswordFlow =
   | "signUp"
@@ -54,6 +55,28 @@ function isKnownAccountLookupError(error: unknown) {
     error.message === "InvalidSecret" ||
     error.message === "TooManyFailedAttempts"
   );
+}
+
+async function resolveEmailForSignIn<DataModel extends GenericDataModel>(
+  ctx: GenericActionCtxWithAuthConfig<DataModel>,
+  flow: PasswordFlow | undefined,
+  params: Record<string, Value | undefined>,
+  fallbackEmail: string,
+) {
+  if (flow !== "signIn" || fallbackEmail) {
+    return fallbackEmail;
+  }
+
+  const username = typeof params.username === "string" ? params.username.trim().toLowerCase() : "";
+  if (!username) {
+    return fallbackEmail;
+  }
+
+  const matchedEmail = await ctx.runQuery(internal.usersInternal.resolveLoginEmailByHandle, {
+    username,
+  });
+
+  return matchedEmail ?? fallbackEmail;
 }
 
 async function retrievePasswordAccount<DataModel extends GenericDataModel>(
@@ -106,7 +129,12 @@ export function PasswordAuth<DataModel extends GenericDataModel>(
       }
 
       const profile = config.profile?.(params, ctx) ?? defaultProfile(params);
-      const email = String(profile.email ?? "").trim().toLowerCase();
+      const email = await resolveEmailForSignIn(
+        ctx,
+        flow,
+        params,
+        String(profile.email ?? "").trim().toLowerCase(),
+      );
       if (!email) {
         throw new Error("Email is required.");
       }

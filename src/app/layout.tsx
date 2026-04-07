@@ -6,6 +6,7 @@ import { siteConfig } from "@/lib/config/site";
 import { ConvexClientProvider } from "@/components/providers/convex-client-provider";
 import { SiteHeader } from "@/components/layout/site-header";
 import { SiteFooter } from "@/components/layout/site-footer";
+import { MainShell } from "@/components/layout/main-shell";
 import "./globals.css";
 import { cn } from "@/lib/utils";
 
@@ -21,8 +22,8 @@ export const metadata: Metadata = {
   title: siteConfig.name,
   description: "Premium account-aware Windows client delivery with gated access and structured member tooling.",
   icons: {
-    icon: "/branding/logo-icon.svg",
-    shortcut: "/branding/logo-icon.svg",
+    icon: "/branding/favicon-icon.svg",
+    shortcut: "/branding/favicon-icon.svg",
   },
 };
 
@@ -33,13 +34,18 @@ export default async function RootLayout({
 }>) {
   return (
     <ConvexAuthNextjsServerProvider>
-      <html lang="en" suppressHydrationWarning className={cn("font-sans", geist.variable)}>
+      <html
+        lang="en"
+        suppressHydrationWarning
+        className={cn("font-sans", geist.variable)}
+        data-scroll-behavior="smooth"
+      >
         <body className={`${ibmPlexSans.className} min-h-screen bg-slate-950 text-slate-100 antialiased`}>
           <ConvexClientProvider>
-            <div className="min-h-screen">
+            <div className="flex min-h-screen flex-col">
               <SiteHeader />
               <SiteBanner />
-              <main className="mx-auto max-w-[1240px] px-4 py-6 sm:px-6">{children}</main>
+              <MainShell>{children}</MainShell>
               <SiteFooter />
             </div>
           </ConvexClientProvider>

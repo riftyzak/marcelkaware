@@ -1,4 +1,4 @@
-import { internalMutation } from "./_generated/server";
+import { internalMutation, internalQuery } from "./_generated/server";
 import { v } from "convex/values";
 
 export const recordStripeEvent = internalMutation({
@@ -182,5 +182,31 @@ export const recordCryptoEvent = internalMutation({
         await ctx.db.insert("subscriptions", patch);
       }
     }
+  },
+});
+
+export const createCryptoCheckoutReference = internalMutation({
+  args: {
+    reference: v.string(),
+    userId: v.id("users"),
+    returnUrl: v.string(),
+  },
+  handler: async (ctx, args) => {
+    return ctx.db.insert("cryptoCheckoutRefs", {
+      ...args,
+      createdAt: Date.now(),
+    });
+  },
+});
+
+export const resolveCryptoCheckoutReference = internalQuery({
+  args: {
+    reference: v.string(),
+  },
+  handler: async (ctx, args) => {
+    return ctx.db
+      .query("cryptoCheckoutRefs")
+      .withIndex("reference", (q) => q.eq("reference", args.reference))
+      .unique();
   },
 });

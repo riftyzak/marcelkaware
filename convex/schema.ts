@@ -140,6 +140,14 @@ export default defineSchema({
   })
     .index("providerAndEventId", ["provider", "eventId"])
     .index("processedAt", ["processedAt"]),
+  cryptoCheckoutRefs: defineTable({
+    reference: v.string(),
+    userId: v.id("users"),
+    returnUrl: v.string(),
+    createdAt: v.number(),
+  })
+    .index("reference", ["reference"])
+    .index("userId", ["userId"]),
   tickets: defineTable({
     userId: v.id("users"),
     createdByUserId: v.id("users"),

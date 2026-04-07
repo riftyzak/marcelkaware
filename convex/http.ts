@@ -68,8 +68,8 @@ http.route({
         signature,
       });
       return Response.json(result);
-    } catch (error) {
-      return new Response(error instanceof Error ? error.message : "Invalid Stripe webhook.", {
+    } catch {
+      return new Response("Invalid webhook request.", {
         status: 400,
       });
     }
@@ -91,8 +91,8 @@ http.route({
         signature,
       });
       return Response.json(result);
-    } catch (error) {
-      return new Response(error instanceof Error ? error.message : "Invalid crypto webhook.", {
+    } catch {
+      return new Response("Invalid webhook request.", {
         status: 400,
       });
     }
