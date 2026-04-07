@@ -1,0 +1,36 @@
+<svg width="1600" height="1080" viewBox="0 0 1600 1080" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="1600" height="1080" fill="#081019"/>
+  <rect width="1600" height="1080" fill="url(#sky)"/>
+  <ellipse cx="1120" cy="312" rx="280" ry="180" fill="url(#glow)" opacity="0.55"/>
+  <ellipse cx="410" cy="250" rx="360" ry="210" fill="#162738" opacity="0.55"/>
+  <path d="M0 696L198 612L364 648L556 570L764 658L948 592L1184 676L1400 604L1600 678V1080H0V696Z" fill="#111A24"/>
+  <path d="M0 760L220 714L392 742L610 690L824 766L1016 726L1268 784L1456 730L1600 770V1080H0V760Z" fill="#151F2B"/>
+  <path d="M0 840L146 814L318 846L492 796L686 862L872 826L1092 884L1278 846L1440 874L1600 848V1080H0V840Z" fill="#192430"/>
+  <path d="M1120 236L1232 620" stroke="#7DA6D6" stroke-opacity="0.24" stroke-width="3"/>
+  <path d="M1210 210L1340 662" stroke="#7DA6D6" stroke-opacity="0.18" stroke-width="2"/>
+  <path d="M962 256L1098 662" stroke="#7DA6D6" stroke-opacity="0.16" stroke-width="2"/>
+  <g opacity="0.34">
+    <rect x="1068" y="374" width="32" height="168" fill="#1E3142"/>
+    <rect x="1114" y="338" width="42" height="204" fill="#223648"/>
+    <rect x="1172" y="394" width="26" height="148" fill="#1E3142"/>
+    <rect x="1208" y="316" width="48" height="226" fill="#263B4E"/>
+    <rect x="1274" y="352" width="44" height="190" fill="#223648"/>
+    <rect x="1330" y="404" width="36" height="138" fill="#1E3142"/>
+  </g>
+  <rect width="1600" height="1080" fill="url(#vignette)"/>
+  <defs>
+    <linearGradient id="sky" x1="800" y1="0" x2="800" y2="1080" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#09111A"/>
+      <stop offset="0.42" stop-color="#0B1320"/>
+      <stop offset="1" stop-color="#0D141E"/>
+    </linearGradient>
+    <radialGradient id="glow" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="translate(1120 312) rotate(90) scale(180 280)">
+      <stop stop-color="#4F80C1"/>
+      <stop offset="1" stop-color="#4F80C1" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="vignette" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="translate(800 540) rotate(90) scale(620 920)">
+      <stop offset="0.56" stop-color="#000000" stop-opacity="0"/>
+      <stop offset="1" stop-color="#000000" stop-opacity="0.7"/>
+    </radialGradient>
+  </defs>
+</svg>

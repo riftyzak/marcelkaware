@@ -1,0 +1,40 @@
+{
+  "name": "marcelkaware",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Phase 1 premium account and launcher entitlement platform scaffold",
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "eslint .",
+    "typecheck": "tsc --noEmit",
+    "convex:dev": "npx convex dev",
+    "convex:codegen": "npx convex codegen"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "@convex-dev/auth": "^0.0.91",
+    "clsx": "^2.1.1",
+    "convex": "^1.34.1",
+    "lucide-react": "^1.7.0",
+    "next": "^16.2.2",
+    "react": "^19.2.4",
+    "react-dom": "^19.2.4",
+    "stripe": "^22.0.0",
+    "tailwind-merge": "^3.5.0",
+    "zod": "^4.3.6"
+  },
+  "devDependencies": {
+    "@tailwindcss/postcss": "^4.2.2",
+    "@types/node": "^25.5.2",
+    "@types/react": "^19.2.14",
+    "@types/react-dom": "^19.2.3",
+    "eslint": "^9.39.4",
+    "eslint-config-next": "^16.2.2",
+    "tailwindcss": "^4.2.2",
+    "typescript": "^6.0.2"
+  }
+}
