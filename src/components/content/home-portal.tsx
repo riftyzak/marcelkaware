@@ -48,7 +48,7 @@ export function HomePortal() {
     <div className="pb-10">
       {/* Hero */}
       <section className="relative overflow-hidden bg-[#070c12]">
-        <div className="relative min-h-[calc(100vh-48px)]">
+        <div className="relative min-h-screen">
           <div className="absolute inset-0 mix-blend-screen opacity-[0.46]">
             <Dither
               colorNum={4}
@@ -67,7 +67,7 @@ export function HomePortal() {
           <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,rgba(255,255,255,0.055),transparent_42%)]" />
           <div className="absolute inset-0 bg-[linear-gradient(90deg,rgba(7,12,18,0.08),rgba(7,12,18,0.005),rgba(7,12,18,0.12))]" />
 
-          <div className="relative mx-auto flex min-h-[calc(100vh-48px)] max-w-[1240px] items-center justify-center px-4 py-20 text-center sm:px-6">
+          <div className="relative mx-auto flex min-h-screen max-w-[1240px] items-center justify-center px-4 py-24 text-center sm:px-6">
             <div className="max-w-6xl space-y-7">
               <div className="space-y-4">
                 <p className="mx-auto max-w-6xl text-[3.25rem] font-semibold leading-[0.98] tracking-tight text-white sm:text-[4rem] lg:text-[4rem]">

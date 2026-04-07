@@ -43,7 +43,7 @@ export function SiteHeader() {
 
   if (isHome) {
     return (
-      <header className="relative z-40 border-b border-white/8 bg-[#0b1015]/80 backdrop-blur-md">
+      <header className="absolute inset-x-0 top-0 z-40 border-b border-white/8 bg-[#0b1015]/70 backdrop-blur-md">
         <div className="mx-auto grid h-13 max-w-[1240px] grid-cols-[auto_1fr_auto] items-center gap-8 px-4 sm:px-6">
           <Link className="inline-flex items-center justify-self-start pr-4 leading-none" href="/">
             <span className="sm:hidden">
