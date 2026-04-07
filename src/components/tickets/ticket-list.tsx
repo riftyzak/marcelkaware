@@ -63,7 +63,6 @@ export function TicketList() {
     <div className="space-y-5">
       <PageIntro
         title="Support tickets"
-        description="Private support for account, billing, launcher, and technical issues."
         actions={
           <Link href="/app/tickets/new">
             <Button>New ticket</Button>
@@ -92,10 +91,10 @@ export function TicketList() {
       </div>
 
       {filteredItems.length ? (
-        <div className="overflow-hidden border border-[color:var(--border)] bg-[color:var(--panel)]">
+        <div>
           {filteredItems.map((ticket: any) => (
             <Link href={`/app/tickets/${ticket._id}`} key={ticket._id}>
-              <div className="border-b border-[color:var(--border)] px-4 py-4 transition-colors last:border-b-0 hover:bg-[#20252b]">
+              <div className="border-b border-[color:var(--border)] py-4 transition-colors hover:bg-white/[0.02]">
                 <div className="flex flex-col gap-3 md:flex-row md:items-start md:justify-between">
                   <div className="min-w-0 space-y-2">
                     <div className="flex flex-wrap items-center gap-2">

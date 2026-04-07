@@ -52,8 +52,7 @@ export function PricingCard() {
   }
 
   return (
-    <section className="mx-auto max-w-xl space-y-5 border border-[color:var(--border)] bg-[color:var(--panel)] p-6">
-      <div className="space-y-5">
+    <section className="mx-auto max-w-xl space-y-5">
         <div className="space-y-2">
           <Badge>Monthly plan</Badge>
           <h2 className="text-3xl font-semibold text-white">{siteConfig.monthlyPrice}</h2>
@@ -97,7 +96,6 @@ export function PricingCard() {
           </div>
         )}
         {error ? <p className="text-sm text-red-300">{error}</p> : null}
-      </div>
     </section>
   );
 }

@@ -37,49 +37,27 @@ const faqs = [
 
 export default function HelpPage() {
   return (
-    <div className="mx-auto max-w-[980px] space-y-8">
-      <section className="space-y-3">
-        <p className="text-sm text-[color:var(--text-dim)]">Help</p>
-        <h1 className="text-4xl font-semibold tracking-tight text-white sm:text-5xl">
-          Help and FAQ
-        </h1>
-        <p className="max-w-3xl text-base leading-8 text-[color:var(--text-muted)]">
-          Use this page for the common rules around access, supported systems, delivery timing,
-          device resets, and account handling. Private ticket support stays in the account area.
-        </p>
-      </section>
+    <div className="mx-auto max-w-[980px] space-y-6">
+      <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
+        <h1 className="text-4xl font-semibold tracking-tight text-white sm:text-5xl">Help</h1>
+        <div className="flex flex-wrap gap-2">
+          <Link href="/#pricing">
+            <Button>View pricing</Button>
+          </Link>
+          <Link href="/contact">
+            <Button variant="secondary">Appeals</Button>
+          </Link>
+        </div>
+      </div>
 
-      <div className="grid gap-10 border-t border-[color:var(--border)] pt-8 lg:grid-cols-[0.72fr_1.28fr]">
-        <section className="space-y-4">
-          <h2 className="text-base font-semibold text-white">Quick links</h2>
-          <div className="space-y-3 text-sm leading-7 text-[color:var(--text-muted)]">
-            <p>Need direct access details? Pricing is shown on the landing page.</p>
-            <p>Need private support? Sign in and open a ticket from your account area.</p>
-            <p>Need an appeal or restricted account review? Use the separate appeals contact path.</p>
+      <div className="space-y-5 border-t border-[color:var(--border)] pt-6">
+        {faqs.map((item, index) => (
+          <div className="space-y-2" key={item.question}>
+            {index > 0 ? <Separator /> : null}
+            <h2 className="pt-1 text-base font-semibold text-white">{item.question}</h2>
+            <p className="text-sm leading-7 text-[color:var(--text-muted)]">{item.answer}</p>
           </div>
-          <div className="flex flex-wrap gap-3 pt-1">
-            <Link href="/#pricing">
-              <Button>View pricing</Button>
-            </Link>
-            <Link href="/contact">
-              <Button variant="secondary">Appeals contact</Button>
-            </Link>
-          </div>
-        </section>
-
-        <section className="space-y-6">
-          {faqs.map((item, index) => (
-            <div className="space-y-3" key={item.question}>
-              {index > 0 ? <Separator /> : null}
-              <div className="space-y-2">
-                <h2 className="text-lg font-semibold text-white">
-                  {index + 1}. {item.question}
-                </h2>
-                <p className="text-sm leading-7 text-[color:var(--text-muted)]">{item.answer}</p>
-              </div>
-            </div>
-          ))}
-        </section>
+        ))}
       </div>
     </div>
   );

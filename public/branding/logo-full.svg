@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg id="Layer_1" data-name="Layer 1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 527.82 88">
+  <defs>
+    <style>
+      .cls-1 {
+        letter-spacing: -.01em;
+      }
+
+      .cls-1, .cls-2, .cls-3, .cls-4, .cls-5 {
+        fill: #8fb0d8;
+      }
+
+      .cls-6 {
+        font-family: Montserrat-Medium, Montserrat;
+        font-size: 48px;
+        font-variation-settings: 'wght' 500;
+        font-weight: 500;
+      }
+
+      .cls-7, .cls-8, .cls-9 {
+        fill: #fff;
+      }
+
+      .cls-2 {
+        letter-spacing: 0em;
+      }
+
+      .cls-3 {
+        letter-spacing: -.01em;
+      }
+
+      .cls-8 {
+        letter-spacing: -.02em;
+      }
+
+      .cls-10 {
+        fill: #f3f6fb;
+      }
+
+      .cls-4 {
+        letter-spacing: 0em;
+      }
+
+      .cls-9 {
+        letter-spacing: -.01em;
+      }
+    </style>
+  </defs>
+  <polygon class="cls-5" points="78 0 78 78 56 88 56 50 39.36 64.93 22 50 22 83 0 83 0 0 39.36 34.93 78 0"/>
+  <polygon class="cls-10" points="106 10 106 38 122.64 23.07 140 38 140 5 162 5 162 88 122.63 53.07 84 88 84 0 106 10"/>
+  <text class="cls-6" transform="translate(181.82 60.43)"><tspan class="cls-5" x="0" y="0">ma</tspan><tspan class="cls-1" x="79.44" y="0">r</tspan><tspan class="cls-4" x="98.54" y="0">c</tspan><tspan class="cls-2" x="125.57" y="0">el</tspan><tspan class="cls-3" x="168.33" y="0">ka</tspan><tspan class="cls-8" x="225.6" y="0">w</tspan><tspan class="cls-7" x="267.69" y="0">a</tspan><tspan class="cls-9" x="296.4" y="0">r</tspan><tspan class="cls-7" x="315.5" y="0">e</tspan></text>
+</svg>

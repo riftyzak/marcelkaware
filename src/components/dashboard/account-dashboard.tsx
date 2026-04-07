@@ -63,7 +63,6 @@ export function AccountDashboard() {
       <section className="space-y-4">
         <PageIntro
           title={dashboard.user.displayName}
-          description="Access, downloads, support, and launcher status."
           actions={
             <div className="flex flex-wrap gap-2">
               <Badge>{dashboard.accessTier}</Badge>
@@ -128,7 +127,7 @@ export function AccountDashboard() {
               </Link>
             )}
           </div>
-          <div className="border border-[color:var(--border)] bg-[color:var(--panel)]">
+          <div>
             {dashboard.payments.length ? (
               dashboard.payments.map((payment: any) => (
                 <div
@@ -159,10 +158,10 @@ export function AccountDashboard() {
           {internalLinks.length ? (
             <div className="space-y-3 border-t border-[color:var(--border)] pt-4">
               <h2 className="text-lg font-semibold text-white">Internal tools</h2>
-              <div className="flex flex-wrap gap-3 text-sm">
+              <div className="flex flex-wrap gap-2">
                 {internalLinks.map((item) => (
-                  <Link className="text-[color:var(--accent)] hover:text-white" href={item.href} key={item.href}>
-                    {item.label}
+                  <Link href={item.href} key={item.href}>
+                    <Button variant="ghost" className="h-8 px-3 text-sm">{item.label}</Button>
                   </Link>
                 ))}
               </div>

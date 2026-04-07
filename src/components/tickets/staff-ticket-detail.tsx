@@ -34,16 +34,15 @@ export function StaffTicketDetail({ ticketId }: { ticketId: string }) {
 
   if (result === undefined) {
     return (
-      <div className="space-y-6">
+      <div className="space-y-4">
         <PageIntro
           breadcrumbs={[
             { label: "Admin", href: "/admin/users" },
             { label: "Ticket queue", href: "/admin/tickets" },
             { label: "Ticket" },
           ]}
-          eyebrow="Operations"
           title="Loading ticket"
-          description="Preparing the staff timeline, context, and assignment controls."
+          description="Loading ticket."
         />
         <StateCard description="Loading staff-visible ticket history and current lifecycle." title="Preparing ticket workspace" />
       </div>
@@ -52,16 +51,15 @@ export function StaffTicketDetail({ ticketId }: { ticketId: string }) {
 
   if (!result.ok || !result.ticket) {
     return (
-      <div className="space-y-6">
+      <div className="space-y-4">
         <PageIntro
           breadcrumbs={[
             { label: "Admin", href: "/admin/users" },
             { label: "Ticket queue", href: "/admin/tickets" },
             { label: "Ticket" },
           ]}
-          eyebrow="Operations"
           title="Ticket unavailable"
-          description="This ticket may be missing or outside the access allowed for the current staff role."
+          description="This ticket is not available."
         />
         <StateCard
           actionHref="/admin/tickets"
@@ -126,7 +124,7 @@ export function StaffTicketDetail({ ticketId }: { ticketId: string }) {
   }
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-4">
       <PageIntro
         actions={
           <Link href="/admin/tickets">
@@ -138,9 +136,8 @@ export function StaffTicketDetail({ ticketId }: { ticketId: string }) {
           { label: "Ticket queue", href: "/admin/tickets" },
           { label: ticket.subject },
         ]}
-        eyebrow="Operations"
         title={ticket.subject}
-        description="Staff-side ticket workspace with lifecycle controls, assignment, account context, and internal-note support."
+        description={undefined}
       />
 
       <Card className="space-y-3">
@@ -170,7 +167,7 @@ export function StaffTicketDetail({ ticketId }: { ticketId: string }) {
             <Card className="space-y-3" key={reply._id}>
               <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
                 <div className="flex items-center gap-3">
-                  <div className="flex h-10 w-10 items-center justify-center rounded-full border border-white/10 bg-slate-950/60 text-sm font-medium text-slate-200">
+                  <div className="flex h-10 w-10 items-center justify-center rounded-[8px] border border-white/10 bg-slate-950/60 text-sm font-medium text-slate-200">
                     {reply.isInternalNote ? "IN" : reply.authorRole === "supportStaff" || reply.authorRole === "admin" ? "ST" : "US"}
                   </div>
                   <div className="space-y-1">
@@ -188,20 +185,15 @@ export function StaffTicketDetail({ ticketId }: { ticketId: string }) {
 
           <Card className="space-y-4">
             <form className="space-y-4" onSubmit={submitReply}>
-              <div className="space-y-1">
-                <h2 className="text-lg font-semibold text-white">Staff reply</h2>
-                <p className="text-sm text-slate-400">
-                  Public replies move the lifecycle automatically. Internal notes stay staff-only and preserve the current user-facing status.
-                </p>
-              </div>
+              <h2 className="text-lg font-semibold text-white">Reply</h2>
               <Textarea
                 onChange={(event) => setBody(event.target.value)}
-                placeholder="Write the next user-facing update or internal note."
+                placeholder="Write the next update or internal note."
                 required
                 rows={8}
                 value={body}
               />
-              <label className="flex items-center gap-3 rounded-2xl border border-white/10 bg-slate-950/40 px-4 py-3 text-sm text-slate-300">
+              <label className="flex items-center gap-3 border border-white/10 bg-slate-950/40 px-4 py-3 text-sm text-slate-300">
                 <input
                   checked={isInternalNote}
                   className="h-4 w-4 rounded border border-white/10 bg-slate-950"
@@ -224,7 +216,7 @@ export function StaffTicketDetail({ ticketId }: { ticketId: string }) {
           <Card className="space-y-4">
             <h2 className="text-lg font-semibold text-white">Assignment</h2>
             <select
-              className="h-11 w-full rounded-2xl border border-white/10 bg-slate-950/70 px-4 text-sm text-slate-100"
+              className="h-11 w-full rounded-[8px] border border-white/10 bg-slate-950/70 px-4 text-sm text-slate-100"
               disabled={assignmentPending}
               onChange={(event) => void updateAssignment(event.target.value)}
               value={ticket.assignedToUserId ?? ""}
@@ -237,14 +229,14 @@ export function StaffTicketDetail({ ticketId }: { ticketId: string }) {
               ))}
             </select>
             <p className="text-sm text-slate-500">
-              {assignmentPending ? "Updating assignment..." : "Ticket ownership is tracked server-side and audited."}
+              {assignmentPending ? "Updating assignment..." : "Assignment is audited."}
             </p>
           </Card>
 
-          <Card className="space-y-4">
+          <Card className="space-y-3">
             <h2 className="text-lg font-semibold text-white">Lifecycle</h2>
             <select
-              className="h-11 w-full rounded-2xl border border-white/10 bg-slate-950/70 px-4 text-sm text-slate-100"
+              className="h-11 w-full rounded-[8px] border border-white/10 bg-slate-950/70 px-4 text-sm text-slate-100"
               disabled={statusPending}
               onChange={(event) => void updateStatus(event.target.value)}
               value={ticket.status}
@@ -256,7 +248,7 @@ export function StaffTicketDetail({ ticketId }: { ticketId: string }) {
               <option value="closed">Closed</option>
             </select>
             <p className="text-sm text-slate-500">
-              {statusPending ? "Updating lifecycle..." : "Use lifecycle only when the queue state needs manual correction."}
+              {statusPending ? "Updating lifecycle..." : "Lifecycle state."}
             </p>
           </Card>
 

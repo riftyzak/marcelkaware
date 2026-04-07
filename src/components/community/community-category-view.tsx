@@ -4,8 +4,7 @@ import { api } from "../../../convex/_generated/api";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { PageIntro } from "@/components/ui/page-intro";
-import { Separator } from "@/components/ui/separator";
+import { Breadcrumbs } from "@/components/ui/breadcrumbs";
 import { StateCard } from "@/components/ui/state-card";
 import { Textarea } from "@/components/ui/textarea";
 import { useMutation, useQuery } from "convex/react";
@@ -20,15 +19,15 @@ function getPostingStateMessage(result: any) {
   if (result.viewer.tier === "guest") {
     return {
       title: "Read-only for guests",
-      description: "Public reading is available here, but starting threads requires an account.",
+      description: "Starting threads requires an account.",
       href: "/register",
       label: "Create account",
     };
   }
   if (result.viewer.tier === "registered" || result.viewer.tier === "expiredSubscriber") {
     return {
-      title: "Posting is limited here",
-      description: "This category is currently read-only for your access state. Subscriber-only posting remains enforced server-side.",
+      title: "Posting is limited",
+      description: "This category is read-only for your current access state.",
       href: "/#pricing",
       label: "View access options",
     };
@@ -36,23 +35,17 @@ function getPostingStateMessage(result: any) {
   return {
     title: "Posting unavailable",
     description: result.category.isArchived
-      ? "This category is archived and preserved for reference."
-      : "Thread creation is not enabled in this category.",
+      ? "This category is archived."
+      : "Thread creation is not enabled here.",
     href: "/community",
     label: "Back to community",
   };
 }
 
 function getAccessLabel(result: any) {
-  if (result.category.isArchived) {
-    return "Archived";
-  }
-  if (result.viewer.canCreateThread) {
-    return "Posting enabled";
-  }
-  if (result.viewer.tier === "guest") {
-    return "Read only";
-  }
+  if (result.category.isArchived) return "Archived";
+  if (result.viewer.canCreateThread) return "Posting enabled";
+  if (result.viewer.tier === "guest") return "Read only";
   return "Restricted";
 }
 
@@ -64,12 +57,11 @@ export function CommunityCategoryView({ slug }: { slug: string }) {
   const [body, setBody] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [showForm, setShowForm] = useState(false);
 
   async function onSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
-    if (!result?.ok || !result.category) {
-      return;
-    }
+    if (!result?.ok || !result.category) return;
     setError(null);
     setIsSubmitting(true);
     try {
@@ -91,15 +83,9 @@ export function CommunityCategoryView({ slug }: { slug: string }) {
   if (result === undefined) {
     return (
       <div className="space-y-4">
-        <PageIntro
-          breadcrumbs={[
-            { label: "Community", href: "/community" },
-            { label: "Category" },
-          ]}
-          title="Loading category"
-          description="Loading threads."
-        />
-        <StateCard description="Loading category details and thread list." title="Preparing category" />
+        <Breadcrumbs items={[{ label: "Community", href: "/community" }, { label: "Category" }]} />
+        <h1 className="text-[2rem] font-semibold tracking-tight text-[color:var(--text)]">Loading category</h1>
+        <p className="text-sm text-[color:var(--text-muted)]">Loading threads.</p>
       </div>
     );
   }
@@ -107,14 +93,8 @@ export function CommunityCategoryView({ slug }: { slug: string }) {
   if (!result.ok || !result.category) {
     return (
       <div className="space-y-4">
-        <PageIntro
-          breadcrumbs={[
-            { label: "Community", href: "/community" },
-            { label: "Category" },
-          ]}
-          title="Category unavailable"
-          description="This category is not available."
-        />
+        <Breadcrumbs items={[{ label: "Community", href: "/community" }, { label: "Category" }]} />
+        <h1 className="text-[2rem] font-semibold tracking-tight text-[color:var(--text)]">Category unavailable</h1>
         <StateCard
           actionHref="/community"
           actionLabel="Back to community"
@@ -130,46 +110,52 @@ export function CommunityCategoryView({ slug }: { slug: string }) {
 
   return (
     <div className="space-y-4">
-      <PageIntro
-        actions={
-          <Link href="/community">
-            <Button variant="secondary">Back to community</Button>
-          </Link>
-        }
-        breadcrumbs={[
-          { label: "Community", href: "/community" },
-          { label: result.category.title },
-        ]}
-        title={result.category.title}
-        description={result.category.description ?? undefined}
-      />
+      <Breadcrumbs items={[{ label: "Community", href: "/community" }, { label: result.category.title }]} />
 
-      <div className="flex flex-col gap-2 border-b border-[color:var(--border)] pb-3 text-sm text-[color:var(--text-muted)] lg:flex-row lg:items-center lg:justify-between">
+      <div className="flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
+        <h1 className="text-[2rem] font-semibold tracking-tight text-[color:var(--text)]">
+          {result.category.title}
+        </h1>
         <div className="flex flex-wrap items-center gap-2">
-          <Badge>{result.threads.length} visible threads</Badge>
-          <Badge>{getAccessLabel(result)}</Badge>
+          {result.viewer.canCreateThread && !showForm ? (
+            <Button variant="secondary" onClick={() => setShowForm(true)}>
+              + New thread
+            </Button>
+          ) : null}
+          <Link href="/community">
+            <Button variant="ghost">Back</Button>
+          </Link>
         </div>
-        <span>{result.category.isArchived ? "Archive mode" : "Forum category"}</span>
       </div>
 
-      {result.viewer.canCreateThread ? (
-        <section className="space-y-4 border-b border-[color:var(--border)] pb-5">
-          <h2 className="text-lg font-semibold text-[color:var(--text)]">Start a thread</h2>
-          <form className="space-y-4" onSubmit={onSubmit}>
+      <div className="flex flex-wrap items-center gap-3 border-b border-[color:var(--border)] pb-3 text-sm text-[color:var(--text-dim)]">
+        <Badge>{result.threads.length} threads</Badge>
+        <Badge>{getAccessLabel(result)}</Badge>
+      </div>
+
+      {/* Collapsible thread creation */}
+      {result.viewer.canCreateThread && showForm ? (
+        <section className="space-y-3 border-b border-[color:var(--border)] pb-4">
+          <form className="space-y-3" onSubmit={onSubmit}>
             <Input onChange={(event) => setTitle(event.target.value)} placeholder="Thread title" value={title} />
             <Textarea
               onChange={(event) => setBody(event.target.value)}
               placeholder="Write the first post."
-              rows={6}
+              rows={5}
               value={body}
             />
             {error ? <p className="text-sm text-red-300">{error}</p> : null}
-            <Button disabled={isSubmitting} type="submit">
-              {isSubmitting ? "Publishing..." : "Create thread"}
-            </Button>
+            <div className="flex gap-2">
+              <Button disabled={isSubmitting} type="submit">
+                {isSubmitting ? "Publishing..." : "Create thread"}
+              </Button>
+              <Button variant="ghost" onClick={() => setShowForm(false)} type="button">
+                Cancel
+              </Button>
+            </div>
           </form>
         </section>
-      ) : postingMessage ? (
+      ) : !result.viewer.canCreateThread && postingMessage ? (
         <StateCard
           actionHref={postingMessage.href}
           actionLabel={postingMessage.label}
@@ -178,59 +164,53 @@ export function CommunityCategoryView({ slug }: { slug: string }) {
         />
       ) : null}
 
-      <section className="space-y-2">
-        <div className="grid grid-cols-1 gap-4 border-b border-[color:var(--border)] px-1 pb-2 text-[11px] uppercase tracking-[0.12em] text-[color:var(--text-dim)] md:grid-cols-[minmax(0,1fr)_110px_110px_170px]">
+      {/* Thread list — flush rows */}
+      <div className="border-b border-[color:var(--border)] pb-1 text-[11px] uppercase tracking-[0.12em] text-[color:var(--text-dim)]">
+        <div className="grid grid-cols-1 gap-4 md:grid-cols-[minmax(0,1fr)_110px_110px_170px]">
           <p>Thread</p>
           <p className="hidden text-right md:block">Replies</p>
           <p className="hidden text-right md:block">Likes</p>
           <p className="hidden text-right md:block">Last activity</p>
         </div>
-        {result.threads.length ? (
-          result.threads.map((thread: any) => (
-            <Link href={`/community/t/${thread._id}`} key={thread._id}>
-              <div className="grid grid-cols-1 gap-4 border-b border-[color:var(--border)] px-1 py-4 transition-colors hover:bg-white/[0.02] md:grid-cols-[minmax(0,1fr)_110px_110px_170px] md:items-center">
-                <div className="min-w-0 space-y-2">
-                  <div className="flex flex-wrap items-center gap-2">
-                    <h2 className="truncate text-[15px] font-semibold text-[color:var(--text)]">{thread.title}</h2>
-                    {thread.isPinned ? <Badge>Pinned</Badge> : null}
-                    {thread.status !== "open" ? <Badge>{thread.status}</Badge> : null}
-                  </div>
-                  <p className="text-sm text-[color:var(--text-muted)]">
-                    Started by {thread.author?.displayName ?? "Member"} · {thread.visiblePostCount} visible posts
-                  </p>
-                  <p className="text-xs text-[color:var(--text-dim)] md:hidden">
-                    {thread.replyCount} replies · {thread.reactionCount} likes · latest by {thread.lastPoster?.displayName ?? "Member"}
-                  </p>
-                </div>
+      </div>
 
-                <div className="hidden text-right md:block">
-                  <p className="text-sm font-medium text-[color:var(--text)]">{thread.replyCount}</p>
+      {result.threads.length ? (
+        result.threads.map((thread: any) => (
+          <Link href={`/community/t/${thread._id}`} key={thread._id}>
+            <div className="grid grid-cols-1 gap-4 border-b border-[color:var(--border)] py-4 transition-colors hover:bg-white/[0.02] md:grid-cols-[minmax(0,1fr)_110px_110px_170px] md:items-center">
+              <div className="min-w-0 space-y-1">
+                <div className="flex flex-wrap items-center gap-2">
+                  <h2 className="truncate text-[15px] font-semibold text-[color:var(--text)]">{thread.title}</h2>
+                  {thread.isPinned ? <Badge>Pinned</Badge> : null}
+                  {thread.status !== "open" ? <Badge>{thread.status}</Badge> : null}
                 </div>
-
-                <div className="hidden text-right md:block">
-                  <p className="text-sm font-medium text-[color:var(--text)]">{thread.reactionCount}</p>
-                </div>
-
-                <div className="hidden text-right md:block">
-                  <p className="truncate text-sm font-medium text-[color:var(--text)]">
-                    {thread.lastPoster?.displayName ?? "Member"}
-                  </p>
-                  <p className="mt-1 text-xs text-[color:var(--text-dim)]">
-                    {new Date(thread.lastPostAt).toLocaleString()}
-                  </p>
-                </div>
+                <p className="text-sm text-[color:var(--text-dim)]">
+                  by {thread.author?.displayName ?? "Member"} &middot; {thread.visiblePostCount} posts
+                </p>
               </div>
-            </Link>
-          ))
-        ) : (
-          <div className="py-2">
-            <StateCard
-              description="No visible threads are available in this category yet."
-              title="Nothing here yet"
-            />
-          </div>
-        )}
-      </section>
+
+              <div className="hidden text-right md:block">
+                <p className="text-sm text-[color:var(--text)]">{thread.replyCount}</p>
+              </div>
+
+              <div className="hidden text-right md:block">
+                <p className="text-sm text-[color:var(--text)]">{thread.reactionCount}</p>
+              </div>
+
+              <div className="hidden text-right md:block">
+                <p className="truncate text-sm text-[color:var(--text)]">
+                  {thread.lastPoster?.displayName ?? "Member"}
+                </p>
+                <p className="text-xs text-[color:var(--text-dim)]">
+                  {new Date(thread.lastPostAt).toLocaleString()}
+                </p>
+              </div>
+            </div>
+          </Link>
+        ))
+      ) : (
+        <p className="py-4 text-sm text-[color:var(--text-muted)]">No visible threads yet.</p>
+      )}
     </div>
   );
 }
