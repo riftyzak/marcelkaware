@@ -6,6 +6,7 @@ import { AuthDialog } from "@/components/auth/auth-dialog";
 import { authConfig } from "@/lib/config/auth";
 import { useAuthActions } from "@convex-dev/auth/react";
 import { useConvexAuth } from "convex/react";
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 
@@ -15,6 +16,7 @@ export function SiteHeader() {
   const pathname = usePathname();
   const router = useRouter();
   const isHome = pathname === "/";
+  const [homeHeaderProgress, setHomeHeaderProgress] = useState(0);
 
   const navLinks = [
     { label: "Forum", href: "/community" },
@@ -41,9 +43,38 @@ export function SiteHeader() {
     router.push("/login");
   }
 
+  useEffect(() => {
+    if (!isHome) {
+      setHomeHeaderProgress(0);
+      return;
+    }
+
+    const onScroll = () => {
+      const progress = Math.min(window.scrollY / 180, 1);
+      setHomeHeaderProgress(progress);
+    };
+
+    onScroll();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
+  }, [isHome]);
+
   if (isHome) {
+    const backgroundOpacity = homeHeaderProgress * 0.78;
+    const blurAmount = homeHeaderProgress * 14;
+    const borderOpacity = homeHeaderProgress * 0.16;
+
     return (
-      <header className="absolute inset-x-0 top-0 z-40 border-b border-white/8 bg-[#0b1015]/70 backdrop-blur-md">
+      <header
+        className="fixed inset-x-0 top-0 z-40 transition-[background-color,border-color,backdrop-filter,box-shadow] duration-200"
+        style={{
+          backgroundColor: `rgba(11, 16, 21, ${backgroundOpacity})`,
+          backdropFilter: `blur(${blurAmount}px)`,
+          WebkitBackdropFilter: `blur(${blurAmount}px)`,
+          borderBottom: `1px solid rgba(255,255,255,${borderOpacity})`,
+          boxShadow: homeHeaderProgress > 0.08 ? "0 8px 28px rgba(0,0,0,0.18)" : "none",
+        }}
+      >
         <div className="mx-auto grid h-13 max-w-[1240px] grid-cols-[auto_1fr_auto] items-center gap-8 px-4 sm:px-6">
           <Link className="inline-flex items-center justify-self-start pr-4 leading-none" href="/">
             <span className="sm:hidden">
