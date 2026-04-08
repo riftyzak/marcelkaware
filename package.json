@@ -4,13 +4,17 @@
   "private": true,
   "description": "Phase 1 premium account and launcher entitlement platform scaffold",
   "scripts": {
-    "dev": "next dev",
     "build": "next build",
+    "dev": "next dev",
     "start": "next start",
     "lint": "eslint .",
     "typecheck": "tsc --noEmit",
     "convex:dev": "npx convex dev",
-    "convex:codegen": "npx convex codegen"
+    "convex:codegen": "npx convex codegen",
+    "preview": "opennextjs-cloudflare build && opennextjs-cloudflare preview",
+    "deploy": "opennextjs-cloudflare build && opennextjs-cloudflare deploy",
+    "upload": "opennextjs-cloudflare build && opennextjs-cloudflare upload",
+    "cf-typegen": "wrangler types --env-interface CloudflareEnv cloudflare-env.d.ts"
   },
   "keywords": [],
   "author": "",
@@ -18,6 +22,7 @@
   "dependencies": {
     "@base-ui/react": "^1.3.0",
     "@convex-dev/auth": "^0.0.91",
+    "@opennextjs/cloudflare": "^1.18.0",
     "@react-three/fiber": "^9.3.0",
     "@react-three/postprocessing": "^3.0.4",
     "class-variance-authority": "^0.7.1",
@@ -46,6 +51,7 @@
     "eslint-config-next": "^16.2.2",
     "shadcn": "^4.1.2",
     "tailwindcss": "^4.2.2",
-    "typescript": "^6.0.2"
+    "typescript": "^6.0.2",
+    "wrangler": "^4.81.0"
   }
 }
