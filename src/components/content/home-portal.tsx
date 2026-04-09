@@ -33,12 +33,12 @@ export function HomePortal() {
 
   function onGetAccess() {
     if (isAuthenticated) {
-      router.push("/pricing");
+      router.push("/purchase");
       return;
     }
 
     if (typeof window !== "undefined") {
-      window.sessionStorage.setItem("auth:next", "/pricing");
+      window.sessionStorage.setItem("auth:next", "/purchase");
     }
 
     router.push("/login");

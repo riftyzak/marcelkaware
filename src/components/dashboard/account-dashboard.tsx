@@ -122,7 +122,7 @@ export function AccountDashboard() {
           <div className="flex items-center justify-between">
             <h2 className="text-lg font-semibold text-white">Payments</h2>
             {!permissions.canBuy ? null : (
-              <Link className="text-sm text-[color:var(--accent)] hover:text-white" href="/#pricing">
+              <Link className="text-sm text-[color:var(--accent)] hover:text-white" href="/purchase">
                 Buy access
               </Link>
             )}

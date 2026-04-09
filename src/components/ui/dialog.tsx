@@ -58,20 +58,22 @@ function DialogBackdrop({
 
 function DialogContent({
   className,
+  containerClassName,
   children,
   showClose = true,
   ...props
 }: React.ComponentProps<typeof DialogPrimitive.Popup> & {
+  containerClassName?: string
   showClose?: boolean
 }) {
   return (
     <DialogPortal>
-      <DialogBackdrop />
-      <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+      <DialogBackdrop className="transition-opacity duration-200 data-[ending-style]:opacity-0 data-[starting-style]:opacity-0" />
+      <div className={cn("fixed inset-0 z-50 flex items-center justify-center p-4", containerClassName)}>
         <DialogPrimitive.Popup
           data-slot="dialog-content"
           className={cn(
-            "relative w-full max-w-[440px] rounded-xl border border-white/10 bg-[#12161c] p-5 text-white shadow-[0_20px_60px_rgba(0,0,0,0.45)] outline-none",
+            "relative w-full max-w-[440px] rounded-xl border border-white/10 bg-[#12161c] p-5 text-white shadow-[0_20px_60px_rgba(0,0,0,0.45)] outline-none transition duration-200 data-[ending-style]:translate-y-2 data-[ending-style]:opacity-0 data-[starting-style]:translate-y-2 data-[starting-style]:opacity-0",
             className
           )}
           {...props}

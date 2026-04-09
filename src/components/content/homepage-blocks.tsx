@@ -25,7 +25,7 @@ function StaticFallbackHomeBlocks() {
           <div className="flex flex-wrap gap-3">
             <Link
               className="inline-flex h-11 items-center rounded-full bg-cyan-400 px-5 text-sm font-medium text-slate-950"
-              href="/#pricing"
+              href="/purchase"
             >
               View access
             </Link>

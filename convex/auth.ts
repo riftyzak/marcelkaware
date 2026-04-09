@@ -6,9 +6,11 @@ export const { auth, signIn, signOut, store, isAuthenticated } = convexAuth({
     PasswordAuth({
       profile(params) {
         const email = String(params.email ?? "").trim().toLowerCase();
+        const username =
+          typeof params.username === "string" ? params.username.trim().toLowerCase() : "";
         const displayName =
           typeof params.name === "string" ? params.name.trim().slice(0, 80) : undefined;
-        if (!email) {
+        if (!email && !username) {
           throw new Error("Email is required.");
         }
         return {

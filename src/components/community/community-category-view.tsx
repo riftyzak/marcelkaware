@@ -28,7 +28,7 @@ function getPostingStateMessage(result: any) {
     return {
       title: "Posting is limited",
       description: "This category is read-only for your current access state.",
-      href: "/#pricing",
+      href: "/purchase",
       label: "View access options",
     };
   }

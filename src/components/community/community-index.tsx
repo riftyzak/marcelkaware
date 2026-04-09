@@ -33,7 +33,7 @@ export function CommunityIndex() {
       <div className="space-y-4">
         <h1 className="text-[2rem] font-semibold tracking-tight text-[color:var(--text)]">Community</h1>
         <StateCard
-          actionHref={result.viewerTier === "banned" ? "/contact" : "/#pricing"}
+          actionHref={result.viewerTier === "banned" ? "/contact" : "/purchase"}
           actionLabel={result.viewerTier === "banned" ? "Open contact page" : "View access options"}
           description={result.message ?? "Community access is currently unavailable."}
           title="Community unavailable"
@@ -52,12 +52,12 @@ export function CommunityIndex() {
             <Link href="/register">
               <Button variant="secondary">Register</Button>
             </Link>
-            <Link href="/#pricing">
-              <Button variant="ghost">Pricing</Button>
+            <Link href="/purchase">
+              <Button variant="ghost">Purchase</Button>
             </Link>
           </div>
         ) : result.viewerTier === "registered" || result.viewerTier === "expiredSubscriber" ? (
-          <Link href="/#pricing">
+          <Link href="/purchase">
             <Button variant="secondary">View access options</Button>
           </Link>
         ) : null}
@@ -128,7 +128,7 @@ export function CommunityIndex() {
           </p>
           <Link
             className="mt-2 inline-block text-sm text-[color:var(--accent)] hover:text-white"
-            href={result.viewerTier === "guest" ? "/register" : "/#pricing"}
+            href={result.viewerTier === "guest" ? "/register" : "/purchase"}
           >
             {result.viewerTier === "guest" ? "Create account" : "View access options"}
           </Link>

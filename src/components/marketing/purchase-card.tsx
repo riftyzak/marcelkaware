@@ -10,7 +10,7 @@ import { useAction, useConvexAuth } from "convex/react";
 import Link from "next/link";
 import { useState } from "react";
 
-export function PricingCard() {
+export function PurchaseCard() {
   const { isAuthenticated } = useConvexAuth();
   const createStripeCheckoutSession = useAction(api.paymentsNode.createStripeCheckoutSession);
   const createCryptoCheckout = useAction(api.paymentsNode.createHostedCryptoCheckout);
@@ -22,7 +22,7 @@ export function PricingCard() {
       setLoading("stripe");
       setError(null);
       const result = await createStripeCheckoutSession({
-        cancelPath: "/pricing",
+        cancelPath: "/purchase",
         successPath: "/app",
       });
       window.location.href = result.url;

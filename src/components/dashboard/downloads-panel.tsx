@@ -21,8 +21,8 @@ export function DownloadsPanel() {
         <StateCard
           title="Downloads unavailable"
           description={downloads.reason ?? "Active access is required for current delivery."}
-          actionHref="/#pricing"
-          actionLabel="View pricing"
+          actionHref="/purchase"
+          actionLabel="View purchase"
         />
       </div>
     );

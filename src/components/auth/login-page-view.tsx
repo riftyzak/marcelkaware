@@ -10,7 +10,13 @@ import { useRecaptchaV3 } from "@/components/auth/recaptcha-v3";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 
-export function LoginPageView() {
+export function LoginPageView({
+  initialNotice = null,
+  initialNextPath = null,
+}: {
+  initialNotice?: string | null;
+  initialNextPath?: string | null;
+}) {
   const router = useRouter();
   const { signIn } = useAuthActions();
   const { available, execute, script } = useRecaptchaV3();
@@ -27,6 +33,15 @@ export function LoginPageView() {
       return;
     }
 
+    if (initialNotice) {
+      setNotice(initialNotice);
+      document.cookie = "auth_notice=; Max-Age=0; path=/";
+    }
+    if (initialNextPath) {
+      setNextPath(initialNextPath);
+      document.cookie = "auth_next=; Max-Age=0; path=/";
+    }
+
     const storedNotice = window.sessionStorage.getItem("auth:notice");
     const storedNext = window.sessionStorage.getItem("auth:next");
     if (storedNotice) {
@@ -35,7 +50,7 @@ export function LoginPageView() {
     if (storedNext) {
       setNextPath(storedNext);
     }
-  }, []);
+  }, [initialNextPath, initialNotice]);
 
   async function onSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();

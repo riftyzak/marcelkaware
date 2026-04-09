@@ -60,7 +60,7 @@ export const createStripeCheckoutSession = action({
         },
       ],
       success_url: `${siteUrl}${args.successPath ?? "/app"}?checkout=success`,
-      cancel_url: `${siteUrl}${args.cancelPath ?? "/pricing"}?checkout=canceled`,
+      cancel_url: `${siteUrl}${args.cancelPath ?? "/purchase"}?checkout=canceled`,
       customer_email: user?.email ?? undefined,
       client_reference_id: String(userId),
       metadata: {
@@ -77,7 +77,7 @@ export const createStripeCheckoutSession = action({
       metadata: { checkoutId: session.id },
     });
 
-    return { url: session.url ?? `${siteUrl}/pricing` };
+    return { url: session.url ?? `${siteUrl}/purchase` };
   },
 });
 

@@ -136,6 +136,9 @@ export function PasswordAuth<DataModel extends GenericDataModel>(
         String(profile.email ?? "").trim().toLowerCase(),
       );
       if (!email) {
+        if (flow === "signIn") {
+          throw new Error("Invalid credentials");
+        }
         throw new Error("Email is required.");
       }
 

@@ -27,7 +27,7 @@ function defaultDataForType(type: HomepageBlockType) {
       title: "Premium delivery for a structured Windows client experience.",
       body: "Access, updates, and community visibility stay tied to one account state model with predictable entitlement handling.",
       primaryLabel: "View access",
-      primaryHref: "/#pricing",
+      primaryHref: "/purchase",
       secondaryLabel: "Contact",
       secondaryHref: "/contact",
     };
@@ -61,7 +61,7 @@ function defaultDataForType(type: HomepageBlockType) {
     title: "Need access?",
     body: "Review the current access path, account requirements, and support coverage before continuing.",
     primaryLabel: "View access",
-    primaryHref: "/#pricing",
+    primaryHref: "/purchase",
     secondaryLabel: "Contact",
     secondaryHref: "/contact",
   };

@@ -274,7 +274,7 @@ export function CommunityThreadView({ threadId }: { threadId: string }) {
         </form>
       ) : (
         <StateCard
-          actionHref={result.viewer.tier === "guest" ? "/register" : result.viewer.tier === "registered" || result.viewer.tier === "expiredSubscriber" ? "/#pricing" : `/community/c/${result.category.slug}`}
+          actionHref={result.viewer.tier === "guest" ? "/register" : result.viewer.tier === "registered" || result.viewer.tier === "expiredSubscriber" ? "/purchase" : `/community/c/${result.category.slug}`}
           actionLabel={result.viewer.tier === "guest" ? "Create account" : result.viewer.tier === "registered" || result.viewer.tier === "expiredSubscriber" ? "View access options" : "Back to category"}
           description={getReplyRestrictionMessage(result)}
           title="Replying unavailable"
