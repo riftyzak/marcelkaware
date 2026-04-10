@@ -3,6 +3,15 @@ import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
   reactStrictMode: true,
+  async redirects() {
+    return [
+      {
+        source: "/pricing",
+        destination: "/purchase",
+        permanent: true,
+      },
+    ];
+  },
   async headers() {
     return [
       {

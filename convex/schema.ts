@@ -24,7 +24,18 @@ export default defineSchema({
     ),
     displayName: v.optional(v.string()),
     handle: v.optional(v.string()),
+    publicUserNumber: v.optional(v.number()),
     avatarUrl: v.optional(v.string()),
+    bio: v.optional(v.string()),
+    location: v.optional(v.string()),
+    links: v.optional(
+      v.array(
+        v.object({
+          label: v.string(),
+          url: v.string(),
+        }),
+      ),
+    ),
     joinedAt: v.optional(v.number()),
     lastSeenAt: v.optional(v.number()),
     banReason: v.optional(v.string()),
@@ -32,8 +43,14 @@ export default defineSchema({
   })
     .index("email", ["email"])
     .index("handle", ["handle"])
+    .index("publicUserNumber", ["publicUserNumber"])
     .index("role", ["role"])
     .index("accountState", ["accountState"]),
+  communityProfileState: defineTable({
+    key: v.string(),
+    nextPublicUserNumber: v.number(),
+    backfillCompletedAt: v.optional(v.number()),
+  }).index("key", ["key"]),
   authSessions: defineTable({
     userId: v.id("users"),
     expirationTime: v.number(),

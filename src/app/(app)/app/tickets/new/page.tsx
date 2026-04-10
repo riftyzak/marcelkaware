@@ -1,5 +1,5 @@
-import { NewTicketForm } from "@/components/tickets/new-ticket-form";
+import { redirect } from "next/navigation";
 
 export default function NewTicketPage() {
-  return <NewTicketForm />;
+  redirect("/community/support/new");
 }

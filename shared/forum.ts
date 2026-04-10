@@ -19,6 +19,64 @@ export type ForumCategoryPosting = {
   allowReplies: boolean;
 };
 
+export type CommunityProfileLink = {
+  label: string;
+  url: string;
+};
+
+function normalizeProfileHandleSegment(value: string) {
+  return value
+    .trim()
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-+|-+$/g, "")
+    .slice(0, 32);
+}
+
+export function buildCommunityProfileSlug(input: {
+  handle?: string | null;
+  displayName?: string | null;
+  publicUserNumber: number;
+}) {
+  const base =
+    normalizeProfileHandleSegment(input.handle ?? "") ||
+    normalizeProfileHandleSegment(input.displayName ?? "") ||
+    "member";
+
+  return `${base}.${input.publicUserNumber}`;
+}
+
+export function buildCommunityProfilePath(input: {
+  handle?: string | null;
+  displayName?: string | null;
+  publicUserNumber: number;
+}) {
+  return `/community/profiles/${buildCommunityProfileSlug(input)}`;
+}
+
+export function parseCommunityProfileSlug(slug: string) {
+  const trimmed = slug.trim().replace(/^\/+|\/+$/g, "");
+  const match = trimmed.match(/^(?<handle>[a-z0-9-]+)\.(?<uid>\d+)$/i);
+  if (!match?.groups?.uid) {
+    return null;
+  }
+
+  return {
+    handle: normalizeProfileHandleSegment(match.groups.handle ?? ""),
+    publicUserNumber: Number(match.groups.uid),
+  };
+}
+
+export function normalizeCommunityProfileLinks(links: CommunityProfileLink[]) {
+  return links
+    .map((item) => ({
+      label: item.label.trim().slice(0, 40),
+      url: item.url.trim(),
+    }))
+    .filter((item) => item.label && item.url)
+    .slice(0, 4);
+}
+
 export function canViewForumCategory(
   tier: AccessTier,
   visibility: ForumCategoryVisibility,

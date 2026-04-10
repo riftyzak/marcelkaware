@@ -34,8 +34,8 @@ export function TicketDetail({ ticketId }: { ticketId: string }) {
       <div className="space-y-4">
         <PageIntro
           breadcrumbs={[
-            { label: "Dashboard", href: "/app" },
-            { label: "Support", href: "/app/tickets" },
+            { label: "Community", href: "/community" },
+            { label: "Support", href: "/community/support" },
             { label: "Ticket" },
           ]}
           title="Loading ticket"
@@ -51,15 +51,15 @@ export function TicketDetail({ ticketId }: { ticketId: string }) {
       <div className="space-y-4">
         <PageIntro
           breadcrumbs={[
-            { label: "Dashboard", href: "/app" },
-            { label: "Support", href: "/app/tickets" },
+            { label: "Community", href: "/community" },
+            { label: "Support", href: "/community/support" },
             { label: "Ticket" },
           ]}
           title="Ticket unavailable"
           description="This ticket is not available."
         />
         <StateCard
-          actionHref="/app/tickets"
+          actionHref="/community/support"
           actionLabel="Back to tickets"
           description={result.message ?? "This ticket is not available."}
           title="Ticket not available"
@@ -109,7 +109,7 @@ export function TicketDetail({ ticketId }: { ticketId: string }) {
       <PageIntro
         actions={
           <>
-            <Link href="/app/tickets">
+            <Link href="/community/support">
               <Button variant="secondary">Back to tickets</Button>
             </Link>
             {ticket.status === "closed" ? (
@@ -132,8 +132,8 @@ export function TicketDetail({ ticketId }: { ticketId: string }) {
           </>
         }
         breadcrumbs={[
-          { label: "Dashboard", href: "/app" },
-          { label: "Support", href: "/app/tickets" },
+          { label: "Community", href: "/community" },
+          { label: "Support", href: "/community/support" },
           { label: ticket.subject },
         ]}
         title={ticket.subject}

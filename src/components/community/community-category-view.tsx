@@ -20,8 +20,8 @@ function getPostingStateMessage(result: any) {
     return {
       title: "Read-only for guests",
       description: "Starting threads requires an account.",
-      href: "/register",
-      label: "Create account",
+      href: "/login",
+      label: "Open login",
     };
   }
   if (result.viewer.tier === "registered" || result.viewer.tier === "expiredSubscriber") {
@@ -185,7 +185,15 @@ export function CommunityCategoryView({ slug }: { slug: string }) {
                   {thread.status !== "open" ? <Badge>{thread.status}</Badge> : null}
                 </div>
                 <p className="text-sm text-[color:var(--text-dim)]">
-                  by {thread.author?.displayName ?? "Member"} &middot; {thread.visiblePostCount} posts
+                  by{" "}
+                  {thread.author?.profilePath ? (
+                    <Link className="transition hover:text-[color:var(--accent)]" href={thread.author.profilePath}>
+                      {thread.author.displayName}
+                    </Link>
+                  ) : (
+                    thread.author?.displayName ?? "Member"
+                  )}{" "}
+                  &middot; {thread.visiblePostCount} posts
                 </p>
               </div>
 
@@ -199,7 +207,13 @@ export function CommunityCategoryView({ slug }: { slug: string }) {
 
               <div className="hidden text-right md:block">
                 <p className="truncate text-sm text-[color:var(--text)]">
-                  {thread.lastPoster?.displayName ?? "Member"}
+                  {thread.lastPoster?.profilePath ? (
+                    <Link className="transition hover:text-[color:var(--accent)]" href={thread.lastPoster.profilePath}>
+                      {thread.lastPoster.displayName}
+                    </Link>
+                  ) : (
+                    thread.lastPoster?.displayName ?? "Member"
+                  )}
                 </p>
                 <p className="text-xs text-[color:var(--text-dim)]">
                   {new Date(thread.lastPostAt).toLocaleString()}

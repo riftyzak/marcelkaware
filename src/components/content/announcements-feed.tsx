@@ -38,8 +38,8 @@ export function AnnouncementsFeed() {
       <PageIntro
         actions={
           result.viewerTier === "guest" ? (
-            <Link href="/register">
-              <Button variant="secondary">Create account</Button>
+            <Link href="/login">
+              <Button variant="secondary">Login</Button>
             </Link>
           ) : undefined
         }

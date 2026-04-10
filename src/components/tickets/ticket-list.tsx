@@ -64,10 +64,11 @@ export function TicketList() {
       <PageIntro
         title="Support tickets"
         actions={
-          <Link href="/app/tickets/new">
+          <Link href="/community/support/new">
             <Button>New ticket</Button>
           </Link>
         }
+        breadcrumbs={[{ label: "Community", href: "/community" }, { label: "Support" }]}
       />
 
       <div className="grid gap-3 md:grid-cols-[1fr_220px]">
@@ -93,7 +94,7 @@ export function TicketList() {
       {filteredItems.length ? (
         <div>
           {filteredItems.map((ticket: any) => (
-            <Link href={`/app/tickets/${ticket._id}`} key={ticket._id}>
+            <Link href={`/community/support/${ticket._id}`} key={ticket._id}>
               <div className="border-b border-[color:var(--border)] py-4 transition-colors hover:bg-white/[0.02]">
                 <div className="flex flex-col gap-3 md:flex-row md:items-start md:justify-between">
                   <div className="min-w-0 space-y-2">
@@ -121,7 +122,7 @@ export function TicketList() {
               ? "Try a different filter."
               : "Open a ticket when you need support."
           }
-          actionHref={items.length ? undefined : "/app/tickets/new"}
+          actionHref={items.length ? undefined : "/community/support/new"}
           actionLabel={items.length ? undefined : "Open ticket"}
           secondaryAction={
             items.length ? (

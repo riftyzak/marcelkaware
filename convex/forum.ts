@@ -2,6 +2,7 @@ import { getAuthUserId } from "@convex-dev/auth/server";
 import { v } from "convex/values";
 import { internal } from "./_generated/api";
 import { mutation, query } from "./_generated/server";
+import { buildCommunityProfilePath } from "../shared/forum";
 import {
   assertAuthenticatedAccountAccess,
   assertForumCategoryManageAccess,
@@ -28,6 +29,67 @@ function normalizeSlug(value: string) {
 
 function getDisplayName(user: any) {
   return user?.displayName ?? user?.name ?? user?.email ?? "Member";
+}
+
+function getRegistrationOrderValue(user: any) {
+  return user?.joinedAt ?? user?._creationTime ?? 0;
+}
+
+async function resolveUserByPublicNumber(ctx: any, publicUserNumber: number) {
+  const directMatch = await ctx.db
+    .query("users")
+    .withIndex("publicUserNumber", (q: any) => q.eq("publicUserNumber", publicUserNumber))
+    .unique();
+
+  if (directMatch) {
+    return directMatch;
+  }
+
+  const users = await ctx.db.query("users").collect();
+  const ordered = [...users].sort((a, b) => {
+    const delta = getRegistrationOrderValue(a) - getRegistrationOrderValue(b);
+    if (delta !== 0) {
+      return delta;
+    }
+    return a._creationTime - b._creationTime;
+  });
+
+  return ordered[publicUserNumber - 1] ?? null;
+}
+
+async function resolvePublicUserNumberForUser(ctx: any, user: any) {
+  if (!user) {
+    return null;
+  }
+
+  if (user.publicUserNumber) {
+    return user.publicUserNumber;
+  }
+
+  const users = await ctx.db.query("users").collect();
+  const ordered = [...users].sort((a, b) => {
+    const delta = getRegistrationOrderValue(a) - getRegistrationOrderValue(b);
+    if (delta !== 0) {
+      return delta;
+    }
+    return a._creationTime - b._creationTime;
+  });
+  const index = ordered.findIndex((entry) => entry._id === user._id);
+
+  return index === -1 ? null : index + 1;
+}
+
+async function getCommunityProfilePathForUser(ctx: any, user: any) {
+  const publicUserNumber = await resolvePublicUserNumberForUser(ctx, user);
+  if (!publicUserNumber) {
+    return null;
+  }
+
+  return buildCommunityProfilePath({
+    handle: user.handle ?? null,
+    displayName: getDisplayName(user),
+    publicUserNumber,
+  });
 }
 
 async function getPublishedBadgesForUser(ctx: any, userId: any) {
@@ -432,12 +494,16 @@ export const categoryDetail = query({
                 ? {
                     handle: author.handle ?? null,
                     displayName: getDisplayName(author),
+                    publicUserNumber: await resolvePublicUserNumberForUser(ctx, author),
+                    profilePath: await getCommunityProfilePathForUser(ctx, author),
                   }
                 : null,
               lastPoster: lastPoster
                 ? {
                     handle: lastPoster.handle ?? null,
                     displayName: getDisplayName(lastPoster),
+                    publicUserNumber: await resolvePublicUserNumberForUser(ctx, lastPoster),
+                    profilePath: await getCommunityProfilePathForUser(ctx, lastPoster),
                   }
                 : null,
             };
@@ -549,6 +615,8 @@ export const threadDetail = query({
                   displayName: getDisplayName(author),
                   avatarUrl: author.avatarUrl ?? null,
                   joinedAt: author.joinedAt ?? null,
+                  publicUserNumber: await resolvePublicUserNumberForUser(ctx, author),
+                  profilePath: await getCommunityProfilePathForUser(ctx, author),
                   badges: await getPublishedBadgesForUser(ctx, author._id),
                 }
               : null,
@@ -587,7 +655,7 @@ export const threadDetail = query({
 
 export const memberProfile = query({
   args: {
-    handle: v.string(),
+    publicUserNumber: v.number(),
   },
   handler: async (ctx, args) => {
     const viewer = await getViewerState(ctx);
@@ -614,10 +682,7 @@ export const memberProfile = query({
         profile: null,
       };
     }
-    const user = await ctx.db
-      .query("users")
-      .withIndex("handle", (q) => q.eq("handle", args.handle.toLowerCase()))
-      .unique();
+    const user = await resolveUserByPublicNumber(ctx, args.publicUserNumber);
     if (!user) {
       return { ok: false, message: "Member not found.", profile: null };
     }
@@ -681,7 +746,16 @@ export const memberProfile = query({
         displayName: getDisplayName(user),
         avatarUrl: user.avatarUrl ?? null,
         joinedAt: user.joinedAt ?? null,
+        publicUserNumber: user.publicUserNumber ?? args.publicUserNumber,
+        canonicalPath: buildCommunityProfilePath({
+          handle: user.handle ?? null,
+          displayName: getDisplayName(user),
+          publicUserNumber: user.publicUserNumber ?? args.publicUserNumber,
+        }),
         role: user.role ?? "registered",
+        bio: user.bio ?? null,
+        location: user.location ?? null,
+        links: user.links ?? [],
         badges: await getPublishedBadgesForUser(ctx, user._id),
         stats: {
           threadCount: visibleThreads.length,
@@ -696,6 +770,9 @@ export const memberProfile = query({
             createdAt: thread.createdAt,
             status: thread.status,
           })),
+      },
+      viewer: {
+        isOwner: Boolean(viewer.userId && viewer.userId === user._id),
       },
     };
   },

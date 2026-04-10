@@ -206,8 +206,8 @@ export function CommunityThreadView({ threadId }: { threadId: string }) {
               </div>
               <div className="flex flex-wrap items-center gap-2 text-sm">
                 <span className="font-medium text-[color:var(--text)]">
-                  {post.author?.handle ? (
-                    <Link className="hover:text-[color:var(--accent-strong)]" href={`/members/${post.author.handle}`}>
+                  {post.author?.profilePath ? (
+                    <Link className="hover:text-[color:var(--accent-strong)]" href={post.author.profilePath}>
                       {post.author.displayName}
                     </Link>
                   ) : (
@@ -274,8 +274,8 @@ export function CommunityThreadView({ threadId }: { threadId: string }) {
         </form>
       ) : (
         <StateCard
-          actionHref={result.viewer.tier === "guest" ? "/register" : result.viewer.tier === "registered" || result.viewer.tier === "expiredSubscriber" ? "/purchase" : `/community/c/${result.category.slug}`}
-          actionLabel={result.viewer.tier === "guest" ? "Create account" : result.viewer.tier === "registered" || result.viewer.tier === "expiredSubscriber" ? "View access options" : "Back to category"}
+          actionHref={result.viewer.tier === "guest" ? "/login" : result.viewer.tier === "registered" || result.viewer.tier === "expiredSubscriber" ? "/purchase" : `/community/c/${result.category.slug}`}
+          actionLabel={result.viewer.tier === "guest" ? "Open login" : result.viewer.tier === "registered" || result.viewer.tier === "expiredSubscriber" ? "View access options" : "Back to category"}
           description={getReplyRestrictionMessage(result)}
           title="Replying unavailable"
         />

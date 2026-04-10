@@ -1,5 +1,5 @@
-import { TicketList } from "@/components/tickets/ticket-list";
+import { redirect } from "next/navigation";
 
 export default function TicketsPage() {
-  return <TicketList />;
+  redirect("/community/support");
 }

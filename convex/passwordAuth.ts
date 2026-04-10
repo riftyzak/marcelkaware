@@ -34,6 +34,8 @@ export interface PasswordConfig<DataModel extends GenericDataModel> {
   reset?: EmailConfig | ((...args: any[]) => EmailConfig);
 }
 
+const usernameLoginPlaceholderSuffix = "@username-login.local";
+
 function defaultProfile(params: Record<string, Value | undefined>) {
   return {
     email: String(params.email ?? "").trim().toLowerCase(),
@@ -63,7 +65,10 @@ async function resolveEmailForSignIn<DataModel extends GenericDataModel>(
   params: Record<string, Value | undefined>,
   fallbackEmail: string,
 ) {
-  if (flow !== "signIn" || fallbackEmail) {
+  if (
+    flow !== "signIn" ||
+    (fallbackEmail && !fallbackEmail.endsWith(usernameLoginPlaceholderSuffix))
+  ) {
     return fallbackEmail;
   }
 

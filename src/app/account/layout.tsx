@@ -3,7 +3,7 @@ import { requireAuthenticatedPage } from "@/lib/auth/require-auth";
 
 export const dynamic = "force-dynamic";
 
-export default async function MembersAreaLayout({
+export default async function AccountAreaLayout({
   children,
 }: {
   children: ReactNode;

@@ -100,7 +100,7 @@ export function AccountDashboard() {
           <Link href="/app/downloads">
             <Button>Downloads</Button>
           </Link>
-          <Link href="/app/tickets">
+          <Link href="/community/support">
             <Button variant="secondary">Tickets</Button>
           </Link>
           <Link href="/community">

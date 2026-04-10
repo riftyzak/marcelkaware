@@ -1,4 +1,4 @@
-import { TicketDetail } from "@/components/tickets/ticket-detail";
+import { redirect } from "next/navigation";
 
 export default async function TicketDetailPage({
   params,
@@ -6,5 +6,5 @@ export default async function TicketDetailPage({
   params: Promise<{ ticketId: string }>;
 }) {
   const { ticketId } = await params;
-  return <TicketDetail ticketId={ticketId} />;
+  redirect(`/community/support/${ticketId}`);
 }

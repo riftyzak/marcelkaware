@@ -40,7 +40,7 @@ export function NewTicketForm() {
         category: category as any,
         priority: priority as any,
       });
-      router.push(`/app/tickets/${ticketId}`);
+      router.push(`/community/support/${ticketId}`);
     } catch (cause) {
       setError(cause instanceof Error ? cause.message : "Unable to create ticket.");
     } finally {
@@ -52,15 +52,15 @@ export function NewTicketForm() {
     <div className="mx-auto max-w-4xl space-y-6">
       <PageIntro
         breadcrumbs={[
-          { label: "Dashboard", href: "/app" },
-          { label: "Support", href: "/app/tickets" },
+          { label: "Community", href: "/community" },
+          { label: "Support", href: "/community/support" },
           { label: "New ticket" },
         ]}
         eyebrow="Support"
         title="Open a private ticket"
         description="Tickets are visible only to you and staff. Clear details up front reduce delays and keep the queue moving."
         actions={
-          <Link href="/app/tickets">
+          <Link href="/community/support">
             <Button variant="secondary">Back to tickets</Button>
           </Link>
         }
@@ -125,7 +125,7 @@ export function NewTicketForm() {
             </div>
             {error ? <p className="text-sm text-red-300">{error}</p> : null}
             <div className="flex flex-wrap justify-end gap-3">
-              <Link href="/app/tickets">
+              <Link href="/community/support">
                 <Button type="button" variant="secondary">
                   Cancel
                 </Button>

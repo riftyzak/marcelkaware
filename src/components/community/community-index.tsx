@@ -49,8 +49,8 @@ export function CommunityIndex() {
         <h1 className="text-[2rem] font-semibold tracking-tight text-[color:var(--text)]">Community</h1>
         {result.viewerTier === "guest" ? (
           <div className="flex flex-wrap gap-2">
-            <Link href="/register">
-              <Button variant="secondary">Register</Button>
+            <Link href="/login">
+              <Button variant="secondary">Login</Button>
             </Link>
             <Link href="/purchase">
               <Button variant="ghost">Purchase</Button>
@@ -128,9 +128,9 @@ export function CommunityIndex() {
           </p>
           <Link
             className="mt-2 inline-block text-sm text-[color:var(--accent)] hover:text-white"
-            href={result.viewerTier === "guest" ? "/register" : "/purchase"}
+            href={result.viewerTier === "guest" ? "/login" : "/purchase"}
           >
-            {result.viewerTier === "guest" ? "Create account" : "View access options"}
+            {result.viewerTier === "guest" ? "Open login" : "View access options"}
           </Link>
         </div>
       )}

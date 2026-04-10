@@ -1,6 +1,10 @@
 import { convexAuth } from "@convex-dev/auth/server";
 import { PasswordAuth } from "./passwordAuth";
 
+function buildUsernameLoginPlaceholder(username: string) {
+  return `${username}@username-login.local`;
+}
+
 export const { auth, signIn, signOut, store, isAuthenticated } = convexAuth({
   providers: [
     PasswordAuth({
@@ -14,7 +18,7 @@ export const { auth, signIn, signOut, store, isAuthenticated } = convexAuth({
           throw new Error("Email is required.");
         }
         return {
-          email,
+          email: email || buildUsernameLoginPlaceholder(username),
           ...(displayName ? { displayName } : {}),
         };
       },

@@ -1,13 +1,18 @@
 "use client";
 
+import { api } from "../../../convex/_generated/api";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import { LogoFull, LogoIcon } from "@/components/layout/logo";
 import { AuthDialog } from "@/components/auth/auth-dialog";
 import { authConfig } from "@/lib/config/auth";
+import { CommunityAvatar } from "@/components/community/community-avatar";
+import { CommunitySearchDialog } from "@/components/community/community-search-dialog";
+import { buildCommunityProfilePath } from "../../../shared/forum";
 import { useAuthActions } from "@convex-dev/auth/react";
-import { useConvexAuth } from "convex/react";
+import { useConvexAuth, useQuery } from "convex/react";
+import { Bell, Mail, Menu, Search, X } from "lucide-react";
 import { useEffect, useState } from "react";
-import { Menu, X } from "lucide-react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 
@@ -17,24 +22,52 @@ type NavLinkItem = {
   protected?: boolean;
 };
 
+function getCommunityProfileHref(identity: {
+  handle?: string | null;
+  displayName?: string | null;
+  publicUserNumber?: number | null;
+} | null) {
+  if (!identity?.publicUserNumber) {
+    return "/community/profile/edit";
+  }
+
+  return buildCommunityProfilePath({
+    handle: identity.handle ?? null,
+    displayName: identity.displayName ?? null,
+    publicUserNumber: identity.publicUserNumber,
+  });
+}
+
 function MobileNavMenu({
   links,
   isAuthenticated,
+  isCommunity,
+  communityIdentity,
   onProtectedNav,
   onSignOut,
   onOpenChange,
 }: {
   links: NavLinkItem[];
   isAuthenticated: boolean;
+  isCommunity: boolean;
+  communityIdentity: {
+    displayName: string;
+    handle: string | null;
+    publicUserNumber: number | null;
+    avatarUrl: string | null;
+  } | null | undefined;
   onProtectedNav: (event: React.MouseEvent<HTMLAnchorElement>, href: string, isProtected?: boolean) => void;
   onSignOut: () => void;
   onOpenChange?: (open: boolean) => void;
 }) {
   const [open, setOpen] = useState(false);
+  const [searchOpen, setSearchOpen] = useState(false);
   const pathname = usePathname();
+  const communityProfileHref = getCommunityProfileHref(communityIdentity ?? null);
 
   useEffect(() => {
     setOpen(false);
+    setSearchOpen(false);
   }, [pathname]);
 
   useEffect(() => {
@@ -73,7 +106,63 @@ function MobileNavMenu({
         }`}
       >
         <div className="flex h-full flex-col px-6 pb-6 pt-7">
-          <div className="space-y-6">
+          {isCommunity && isAuthenticated && communityIdentity ? (
+            <div className="space-y-4 border-b border-white/8 pb-5">
+              <Link className="flex items-center gap-3" href={communityProfileHref} onClick={() => setOpen(false)}>
+                <CommunityAvatar
+                  avatarUrl={communityIdentity.avatarUrl}
+                  className="h-10 w-10"
+                  displayName={communityIdentity.displayName}
+                  fallbackClassName="text-sm"
+                />
+                <div className="min-w-0">
+                  <p className="truncate text-base font-medium text-white">{communityIdentity.displayName}</p>
+                  {communityIdentity.handle ? (
+                    <p className="truncate text-xs text-[color:var(--text-dim)]">@{communityIdentity.handle}</p>
+                  ) : null}
+                </div>
+              </Link>
+
+              <div className="flex items-center gap-4 text-slate-300">
+                <Link
+                  aria-label="Open conversations"
+                  className="inline-flex h-9 w-9 items-center justify-center transition hover:text-white"
+                  href="/community/conversations"
+                  onClick={() => setOpen(false)}
+                >
+                  <Mail className="h-4.5 w-4.5" />
+                </Link>
+                <Link
+                  aria-label="Open alerts"
+                  className="inline-flex h-9 w-9 items-center justify-center transition hover:text-white"
+                  href="/community/alerts"
+                  onClick={() => setOpen(false)}
+                >
+                  <Bell className="h-4.5 w-4.5" />
+                </Link>
+                <button
+                  aria-label="Open search panel"
+                  className="inline-flex h-9 w-9 items-center justify-center transition hover:text-white"
+                  onClick={() => setSearchOpen((current) => !current)}
+                  type="button"
+                >
+                  <Search className="h-4.5 w-4.5" />
+                </button>
+              </div>
+
+              {searchOpen ? (
+                <div className="space-y-3 border-t border-white/8 pt-4">
+                  <Input placeholder="Search forum by keyword" />
+                  <Input placeholder="Filter by author" />
+                  <Button className="w-full" variant="secondary">
+                    Search forum
+                  </Button>
+                </div>
+              ) : null}
+            </div>
+          ) : null}
+
+          <div className={`space-y-6 ${isCommunity && isAuthenticated && communityIdentity ? "pt-5" : ""}`}>
             {links.map((item) => (
               <Link
                 className="block py-0.5 text-[2.15rem] font-semibold tracking-[-0.05em] text-white transition hover:text-[#8fb0d8]"
@@ -91,25 +180,54 @@ function MobileNavMenu({
 
           <div className="mt-auto border-t border-white/8 pt-5">
             {isAuthenticated ? (
-              <div className="space-y-2">
-                <Link
-                  className="block rounded-2xl px-4 py-3 text-[0.98rem] text-slate-200 transition hover:bg-white/5 hover:text-white"
-                  href="/app"
-                  onClick={() => setOpen(false)}
-                >
-                  Account
-                </Link>
-                <button
-                  className="block w-full rounded-2xl px-4 py-3 text-left text-[0.98rem] text-slate-200 transition hover:bg-white/5 hover:text-white"
-                  onClick={() => {
-                    setOpen(false);
-                    onSignOut();
-                  }}
-                  type="button"
-                >
-                  Sign out
-                </button>
-              </div>
+              isCommunity && communityIdentity ? (
+                <div className="space-y-2">
+                  <Link
+                    className="block rounded-2xl px-4 py-3 text-[0.98rem] text-slate-200 transition hover:bg-white/5 hover:text-white"
+                    href={communityProfileHref}
+                    onClick={() => setOpen(false)}
+                  >
+                    View profile
+                  </Link>
+                  <Link
+                    className="block rounded-2xl px-4 py-3 text-[0.98rem] text-slate-200 transition hover:bg-white/5 hover:text-white"
+                    href="/community/profile/edit"
+                    onClick={() => setOpen(false)}
+                  >
+                    Edit profile
+                  </Link>
+                  <button
+                    className="block w-full rounded-2xl px-4 py-3 text-left text-[0.98rem] text-slate-200 transition hover:bg-white/5 hover:text-white"
+                    onClick={() => {
+                      setOpen(false);
+                      onSignOut();
+                    }}
+                    type="button"
+                  >
+                    Sign out
+                  </button>
+                </div>
+              ) : (
+                <div className="space-y-2">
+                  <Link
+                    className="block rounded-2xl px-4 py-3 text-[0.98rem] text-slate-200 transition hover:bg-white/5 hover:text-white"
+                    href="/app"
+                    onClick={() => setOpen(false)}
+                  >
+                    Account
+                  </Link>
+                  <button
+                    className="block w-full rounded-2xl px-4 py-3 text-left text-[0.98rem] text-slate-200 transition hover:bg-white/5 hover:text-white"
+                    onClick={() => {
+                      setOpen(false);
+                      onSignOut();
+                    }}
+                    type="button"
+                  >
+                    Sign out
+                  </button>
+                </div>
+              )
             ) : (
               <div className="grid grid-cols-2 gap-3 pt-2">
                 <Link
@@ -138,6 +256,7 @@ function MobileNavMenu({
 
 export function SiteHeader() {
   const { isAuthenticated } = useConvexAuth();
+  const viewerCommunityIdentity = useQuery(api.users.viewerCommunityIdentity, {});
   const { signOut } = useAuthActions();
   const pathname = usePathname();
   const router = useRouter();
@@ -148,7 +267,7 @@ export function SiteHeader() {
 
   const navLinks: NavLinkItem[] = [
     { label: "Forum", href: "/community" },
-    { label: "Support", href: "/app/tickets", protected: true },
+    { label: "Support", href: "/community/support", protected: true },
     { label: "Download", href: "/app/downloads", protected: true },
     { label: "Purchase", href: "/purchase", protected: true },
   ];
@@ -212,7 +331,9 @@ export function SiteHeader() {
             <div className="flex items-center gap-2">
               {!isAuthenticated ? <AuthDialog mode="login" /> : null}
               <MobileNavMenu
+                communityIdentity={viewerCommunityIdentity}
                 isAuthenticated={isAuthenticated}
+                isCommunity={false}
                 links={homeNavLinks}
                 onProtectedNav={onProtectedNav}
                 onOpenChange={setMobileMenuOpen}
@@ -273,6 +394,8 @@ export function SiteHeader() {
     );
   }
 
+  const communityProfileHref = getCommunityProfileHref(viewerCommunityIdentity ?? null);
+
   return (
     <header
       className={`sticky top-0 z-40 border-b ${
@@ -292,11 +415,45 @@ export function SiteHeader() {
             <LogoIcon className="h-7" />
           </Link>
 
-          <div className="flex items-center gap-2">
-            {!isAuthenticated ? <AuthDialog mode="login" /> : null}
+          <div className="flex items-center gap-1">
+            {isCommunity && isAuthenticated && viewerCommunityIdentity ? (
+              <>
+                <Link
+                  aria-label="Open your profile"
+                  className="inline-flex items-center justify-center"
+                  href={communityProfileHref}
+                >
+                  <CommunityAvatar
+                    avatarUrl={viewerCommunityIdentity.avatarUrl}
+                    className="h-8 w-8"
+                    displayName={viewerCommunityIdentity.displayName}
+                    fallbackClassName="text-[11px]"
+                  />
+                </Link>
+                <Link
+                  aria-label="Open conversations"
+                  className="inline-flex h-9 w-9 items-center justify-center text-slate-200 transition hover:text-white"
+                  href="/community/conversations"
+                >
+                  <Mail className="h-4.5 w-4.5" />
+                </Link>
+                <Link
+                  aria-label="Open alerts"
+                  className="inline-flex h-9 w-9 items-center justify-center text-slate-200 transition hover:text-white"
+                  href="/community/alerts"
+                >
+                  <Bell className="h-4.5 w-4.5" />
+                </Link>
+                <CommunitySearchDialog iconClassName="inline-flex h-9 w-9 items-center justify-center text-slate-200 transition hover:text-white" />
+              </>
+            ) : !isAuthenticated ? (
+              <AuthDialog mode="login" />
+            ) : null}
             <MobileNavMenu
+              communityIdentity={viewerCommunityIdentity}
               isAuthenticated={isAuthenticated}
-              links={navLinks}
+              isCommunity={isCommunity}
+              links={isCommunity ? navLinks : navLinks}
               onProtectedNav={onProtectedNav}
               onOpenChange={setMobileMenuOpen}
               onSignOut={() => void signOut()}
@@ -310,7 +467,7 @@ export function SiteHeader() {
           </Link>
 
           <nav className="flex items-center gap-8 justify-self-center">
-            {navLinks.map((item) => {
+            {(isCommunity ? navLinks : navLinks).map((item) => {
               const active =
                 pathname === item.href ||
                 (item.href !== "/" &&
@@ -338,20 +495,52 @@ export function SiteHeader() {
             ) : null}
           </nav>
 
-          <div className="flex items-center justify-self-end gap-2">
+          <div className="flex items-center justify-self-end gap-3">
             {isAuthenticated ? (
-              <>
-                <Link className="px-2 py-1 text-sm text-slate-400 transition hover:text-white" href="/app">
-                  Dashboard
-                </Link>
-                <button
-                  className="px-2 py-1 text-sm text-slate-400 transition hover:text-white"
-                  onClick={() => void signOut()}
-                  type="button"
-                >
-                  Sign out
-                </button>
-              </>
+              isCommunity && viewerCommunityIdentity ? (
+                <>
+                  <Link className="flex items-center gap-2 pr-1 leading-none transition hover:text-white" href={communityProfileHref}>
+                    <CommunityAvatar
+                      avatarUrl={viewerCommunityIdentity.avatarUrl}
+                      className="h-8 w-8"
+                      displayName={viewerCommunityIdentity.displayName}
+                      fallbackClassName="text-[11px]"
+                    />
+                    <span className="max-w-[150px] truncate text-sm text-slate-200">
+                      {viewerCommunityIdentity.displayName}
+                    </span>
+                  </Link>
+                  <span className="h-4 w-px bg-white/10" />
+                  <Link
+                    aria-label="Open conversations"
+                    className="inline-flex h-8 w-8 items-center justify-center text-slate-300 transition hover:text-white"
+                    href="/community/conversations"
+                  >
+                    <Mail className="h-4 w-4" />
+                  </Link>
+                  <Link
+                    aria-label="Open alerts"
+                    className="inline-flex h-8 w-8 items-center justify-center text-slate-300 transition hover:text-white"
+                    href="/community/alerts"
+                  >
+                    <Bell className="h-4 w-4" />
+                  </Link>
+                  <CommunitySearchDialog iconClassName="inline-flex h-8 w-8 items-center justify-center text-slate-300 transition hover:text-white" />
+                </>
+              ) : (
+                <>
+                  <Link className="px-2 py-1 text-sm text-slate-400 transition hover:text-white" href="/app">
+                    Dashboard
+                  </Link>
+                  <button
+                    className="px-2 py-1 text-sm text-slate-400 transition hover:text-white"
+                    onClick={() => void signOut()}
+                    type="button"
+                  >
+                    Sign out
+                  </button>
+                </>
+              )
             ) : (
               <>
                 <AuthDialog mode="login" />
@@ -368,7 +557,6 @@ export function SiteHeader() {
           </div>
         </div>
       </div>
-
     </header>
   );
 }
