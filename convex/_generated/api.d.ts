@@ -15,6 +15,8 @@ import type * as auth from "../auth.js";
 import type * as badges from "../badges.js";
 import type * as banners from "../banners.js";
 import type * as changelogs from "../changelogs.js";
+import type * as communitySupport from "../communitySupport.js";
+import type * as communitySupportNode from "../communitySupportNode.js";
 import type * as crons from "../crons.js";
 import type * as downloads from "../downloads.js";
 import type * as forum from "../forum.js";
@@ -47,6 +49,8 @@ declare const fullApi: ApiFromModules<{
   badges: typeof badges;
   banners: typeof banners;
   changelogs: typeof changelogs;
+  communitySupport: typeof communitySupport;
+  communitySupportNode: typeof communitySupportNode;
   crons: typeof crons;
   downloads: typeof downloads;
   forum: typeof forum;

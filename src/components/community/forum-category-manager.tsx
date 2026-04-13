@@ -7,6 +7,7 @@ import { Input } from "@/components/ui/input";
 import { PageIntro } from "@/components/ui/page-intro";
 import { StateCard } from "@/components/ui/state-card";
 import { Textarea } from "@/components/ui/textarea";
+import { normalizeClientErrorMessage } from "@/lib/errors/normalize-client-error";
 import { useMutation, useQuery } from "convex/react";
 import { useMemo, useState } from "react";
 
@@ -86,7 +87,7 @@ export function ForumCategoryManager() {
       });
       setForm(initialFormState);
     } catch (submitError) {
-      setError(submitError instanceof Error ? submitError.message : "Unable to save category.");
+      setError(normalizeClientErrorMessage(submitError, "Unable to save category."));
     } finally {
       setIsSaving(false);
     }
@@ -106,7 +107,7 @@ export function ForumCategoryManager() {
       setError(null);
       await reorderCategories({ orderedIds: orderedIds as any });
     } catch (cause) {
-      setError(cause instanceof Error ? cause.message : "Unable to reorder categories.");
+      setError(normalizeClientErrorMessage(cause, "Unable to reorder categories."));
     } finally {
       setIsReordering(false);
     }

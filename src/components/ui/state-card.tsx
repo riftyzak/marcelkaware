@@ -3,6 +3,7 @@ import { Card } from "./card";
 import { Button } from "./button";
 import Link from "next/link";
 import { cn } from "@/lib/utils/cn";
+import { normalizeClientErrorMessage } from "@/lib/errors/normalize-client-error";
 
 export function StateCard({
   title,
@@ -19,6 +20,8 @@ export function StateCard({
   secondaryAction?: ReactNode;
   tone?: "default" | "error" | "warning";
 }) {
+  const safeDescription = normalizeClientErrorMessage(description, description);
+
   return (
     <Card
       className={cn(
@@ -36,7 +39,7 @@ export function StateCard({
             tone === "warning" ? "text-[color:var(--text)]" : undefined,
           )}
         >
-          {description}
+          {safeDescription}
         </p>
       </div>
       {actionLabel && actionHref ? (

@@ -6,6 +6,7 @@ import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { PageIntro } from "@/components/ui/page-intro";
 import { StateCard } from "@/components/ui/state-card";
+import { normalizeClientErrorMessage } from "@/lib/errors/normalize-client-error";
 import { useAction, useQuery } from "convex/react";
 import Link from "next/link";
 import { useState } from "react";
@@ -28,7 +29,7 @@ export function RedeemKeyPanel() {
       setCode("");
       setSuccess(`Access updated successfully. ${result.durationDays} days were applied to this account.`);
     } catch (cause) {
-      setError(cause instanceof Error ? cause.message : "Unable to redeem this key.");
+      setError(normalizeClientErrorMessage(cause, "Unable to redeem this key."));
     } finally {
       setPending(false);
     }

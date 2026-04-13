@@ -7,6 +7,7 @@ import { Input } from "@/components/ui/input";
 import { PageIntro } from "@/components/ui/page-intro";
 import { StateCard } from "@/components/ui/state-card";
 import { Textarea } from "@/components/ui/textarea";
+import { normalizeClientErrorMessage } from "@/lib/errors/normalize-client-error";
 import { useMutation, useQuery } from "convex/react";
 import Link from "next/link";
 import { useState } from "react";
@@ -44,7 +45,7 @@ export function AdminResellersManager() {
       setStatus("active");
       setNotes("");
     } catch (cause) {
-      setError(cause instanceof Error ? cause.message : "Unable to save reseller.");
+      setError(normalizeClientErrorMessage(cause, "Unable to save reseller."));
     } finally {
       setPending(false);
     }

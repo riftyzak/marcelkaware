@@ -1,6 +1,7 @@
 import type { ReactNode } from "react";
 import Link from "next/link";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
+import { contactConfig, contactMailto } from "@/lib/config/contact";
 
 const faqItems = [
   {
@@ -15,9 +16,9 @@ const faqItems = [
         or email{" "}
         <Link
           className="font-medium !text-[#8fb0d8] transition-colors hover:!text-white"
-          href="mailto:legal@marcelkaware.dev"
+          href={contactMailto}
         >
-          legal@marcelkaware.dev
+          {contactConfig.email}
         </Link>
         .
       </>

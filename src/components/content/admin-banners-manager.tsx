@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { PageIntro } from "@/components/ui/page-intro";
 import { StateCard } from "@/components/ui/state-card";
+import { normalizeClientErrorMessage } from "@/lib/errors/normalize-client-error";
 import { useMutation, useQuery } from "convex/react";
 import Link from "next/link";
 import { useState } from "react";
@@ -22,7 +23,7 @@ export function AdminBannersManager() {
       setError(null);
       await setPublished({ bannerId: bannerId as any, published });
     } catch (cause) {
-      setError(cause instanceof Error ? cause.message : "Unable to update banner.");
+      setError(normalizeClientErrorMessage(cause, "Unable to update banner."));
     } finally {
       setPendingId(null);
     }

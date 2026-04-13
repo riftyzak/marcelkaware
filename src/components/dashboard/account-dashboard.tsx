@@ -97,7 +97,7 @@ export function AccountDashboard() {
         </div>
 
         <div className="flex flex-wrap gap-2 border-t border-[color:var(--border)] pt-4">
-          <Link href="/app/downloads">
+          <Link href="/downloads">
             <Button>Downloads</Button>
           </Link>
           <Link href="/community/support">

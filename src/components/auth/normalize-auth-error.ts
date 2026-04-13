@@ -1,7 +1,9 @@
 "use client";
 
+import { normalizeClientErrorMessage } from "@/lib/errors/normalize-client-error";
+
 export function normalizeAuthErrorMessage(cause: unknown, fallback: string) {
-  const raw = cause instanceof Error ? cause.message : fallback;
+  const raw = normalizeClientErrorMessage(cause, fallback);
 
   if (!raw) {
     return fallback;
@@ -15,8 +17,5 @@ export function normalizeAuthErrorMessage(cause: unknown, fallback: string) {
     return "Too many attempts. Please wait a moment and try again.";
   }
 
-  return raw
-    .replace(/\[Request ID:[^\]]+\]\s*/g, "")
-    .replace(/Server Error\s*Uncaught Error:\s*/g, "")
-    .trim() || fallback;
+  return raw.trim() || fallback;
 }

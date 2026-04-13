@@ -1,6 +1,8 @@
 import { Breadcrumbs } from "@/components/ui/breadcrumbs";
+import { requireAuthenticatedPage } from "@/lib/auth/require-auth";
 
-export default function CommunityAlertsPage() {
+export default async function CommunityAlertsPage() {
+  await requireAuthenticatedPage();
   return (
     <div className="space-y-5">
       <Breadcrumbs items={[{ label: "Community", href: "/community" }, { label: "Alerts" }]} />

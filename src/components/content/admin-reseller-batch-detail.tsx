@@ -7,6 +7,7 @@ import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { PageIntro } from "@/components/ui/page-intro";
 import { StateCard } from "@/components/ui/state-card";
+import { normalizeClientErrorMessage } from "@/lib/errors/normalize-client-error";
 import { useMutation, useQuery } from "convex/react";
 import Link from "next/link";
 import { useState } from "react";
@@ -28,7 +29,7 @@ export function AdminResellerBatchDetail({ batchId }: { batchId: string }) {
       setError(null);
       await issueBatch({ batchId: result.batch._id });
     } catch (cause) {
-      setError(cause instanceof Error ? cause.message : "Unable to issue batch.");
+      setError(normalizeClientErrorMessage(cause, "Unable to issue batch."));
     } finally {
       setPendingAction(null);
     }
@@ -43,7 +44,7 @@ export function AdminResellerBatchDetail({ batchId }: { batchId: string }) {
         internalNote: revokeNotes[keyId]?.trim() || undefined,
       });
     } catch (cause) {
-      setError(cause instanceof Error ? cause.message : "Unable to revoke key.");
+      setError(normalizeClientErrorMessage(cause, "Unable to revoke key."));
     } finally {
       setPendingAction(null);
     }

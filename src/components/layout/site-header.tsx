@@ -266,14 +266,14 @@ export function SiteHeader() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   const navLinks: NavLinkItem[] = [
-    { label: "Forum", href: "/community" },
-    { label: "Support", href: "/community/support", protected: true },
-    { label: "Download", href: "/app/downloads", protected: true },
+    { label: "Forum", href: "/community", protected: true },
+    { label: "Support", href: "/community/support" },
+    { label: "Download", href: "/downloads", protected: true },
     { label: "Purchase", href: "/purchase", protected: true },
   ];
   const homeNavLinks: NavLinkItem[] = [
     { label: "Main", href: "/" },
-    { label: "Forum", href: "/community" },
+    { label: "Forum", href: "/community", protected: true },
     { label: "Help", href: "/help" },
   ];
 
@@ -490,7 +490,7 @@ export function SiteHeader() {
             })}
             {pathname === "/contact" ? (
               <Link className="text-sm text-white" href="/contact">
-                Appeals
+                Contact
               </Link>
             ) : null}
           </nav>

@@ -2,6 +2,7 @@
 
 import { api } from "../../../convex/_generated/api";
 import { Button } from "@/components/ui/button";
+import { normalizeClientErrorMessage } from "@/lib/errors/normalize-client-error";
 import { useAction } from "convex/react";
 import { useState } from "react";
 
@@ -18,7 +19,7 @@ export function LauncherPairingCard() {
       const result = await issuePairingChallenge({});
       setPairingCode(result.code);
     } catch (cause) {
-      setError(cause instanceof Error ? cause.message : "Unable to generate a pairing code.");
+      setError(normalizeClientErrorMessage(cause, "Unable to generate a pairing code."));
     } finally {
       setPending(false);
     }

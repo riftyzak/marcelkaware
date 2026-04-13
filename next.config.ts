@@ -10,6 +10,11 @@ const nextConfig: NextConfig = {
         destination: "/purchase",
         permanent: true,
       },
+      {
+        source: "/app/downloads",
+        destination: "/downloads",
+        permanent: true,
+      },
     ];
   },
   async headers() {

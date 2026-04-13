@@ -7,6 +7,7 @@ import { Input } from "@/components/ui/input";
 import { PageIntro } from "@/components/ui/page-intro";
 import { StateCard } from "@/components/ui/state-card";
 import { Textarea } from "@/components/ui/textarea";
+import { normalizeClientErrorMessage } from "@/lib/errors/normalize-client-error";
 import { useMutation, useQuery } from "convex/react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -58,7 +59,7 @@ export function AdminBadgeEditor({ slug }: { slug: string }) {
       }
       router.push("/admin/badges");
     } catch (cause) {
-      setError(cause instanceof Error ? cause.message : "Unable to save badge.");
+      setError(normalizeClientErrorMessage(cause, "Unable to save badge."));
     } finally {
       setPending(false);
     }

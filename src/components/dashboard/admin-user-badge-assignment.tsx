@@ -9,6 +9,7 @@ import { Input } from "@/components/ui/input";
 import { PageIntro } from "@/components/ui/page-intro";
 import { StateCard } from "@/components/ui/state-card";
 import { Textarea } from "@/components/ui/textarea";
+import { normalizeClientErrorMessage } from "@/lib/errors/normalize-client-error";
 import { useMutation, useQuery } from "convex/react";
 import Link from "next/link";
 import { useMemo, useState } from "react";
@@ -48,7 +49,7 @@ export function AdminUserBadgeAssignment({ userId }: { userId: string }) {
       setSelectedBadgeId("");
       setInternalNote("");
     } catch (cause) {
-      setError(cause instanceof Error ? cause.message : "Unable to assign badge.");
+      setError(normalizeClientErrorMessage(cause, "Unable to assign badge."));
     } finally {
       setPending(false);
     }
@@ -60,7 +61,7 @@ export function AdminUserBadgeAssignment({ userId }: { userId: string }) {
       setError(null);
       await removeBadge({ userBadgeId: userBadgeId as any });
     } catch (cause) {
-      setError(cause instanceof Error ? cause.message : "Unable to remove badge.");
+      setError(normalizeClientErrorMessage(cause, "Unable to remove badge."));
     } finally {
       setRemovingId(null);
     }

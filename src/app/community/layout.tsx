@@ -1,5 +1,4 @@
 import type { ReactNode } from "react";
-import { requireAuthenticatedPage } from "@/lib/auth/require-auth";
 
 export const dynamic = "force-dynamic";
 
@@ -8,7 +7,5 @@ export default async function CommunityAreaLayout({
 }: {
   children: ReactNode;
 }) {
-  await requireAuthenticatedPage();
-
   return children;
 }

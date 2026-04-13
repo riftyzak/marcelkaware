@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Breadcrumbs } from "@/components/ui/breadcrumbs";
 import { StateCard } from "@/components/ui/state-card";
 import { Textarea } from "@/components/ui/textarea";
+import { normalizeClientErrorMessage } from "@/lib/errors/normalize-client-error";
 import { useMutation, useQuery } from "convex/react";
 import Link from "next/link";
 import { useMemo, useState } from "react";
@@ -66,7 +67,7 @@ export function CommunityThreadView({ threadId }: { threadId: string }) {
       await addReply({ threadId: threadId as any, body });
       setBody("");
     } catch (error) {
-      setReplyError(error instanceof Error ? error.message : "Unable to add reply.");
+      setReplyError(normalizeClientErrorMessage(error, "Unable to add reply."));
     } finally {
       setIsReplying(false);
     }
@@ -78,7 +79,7 @@ export function CommunityThreadView({ threadId }: { threadId: string }) {
     try {
       await toggleReaction({ postId: postId as any });
     } catch (error) {
-      setReactionError(error instanceof Error ? error.message : "Unable to update reaction.");
+      setReactionError(normalizeClientErrorMessage(error, "Unable to update reaction."));
     } finally {
       setReactionPendingPostId(null);
     }
@@ -91,7 +92,7 @@ export function CommunityThreadView({ threadId }: { threadId: string }) {
     try {
       await moderateThread({ threadId: result.thread._id, ...update });
     } catch (error) {
-      setModerationError(error instanceof Error ? error.message : "Unable to update thread.");
+      setModerationError(normalizeClientErrorMessage(error, "Unable to update thread."));
     } finally {
       setModerationPending(false);
     }
@@ -103,7 +104,7 @@ export function CommunityThreadView({ threadId }: { threadId: string }) {
     try {
       await moderatePost({ postId: postId as any, status });
     } catch (error) {
-      setModerationError(error instanceof Error ? error.message : "Unable to update post.");
+      setModerationError(normalizeClientErrorMessage(error, "Unable to update post."));
     } finally {
       setModerationPending(false);
     }

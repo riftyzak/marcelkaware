@@ -7,6 +7,7 @@ import { Input } from "@/components/ui/input";
 import { Breadcrumbs } from "@/components/ui/breadcrumbs";
 import { StateCard } from "@/components/ui/state-card";
 import { Textarea } from "@/components/ui/textarea";
+import { normalizeClientErrorMessage } from "@/lib/errors/normalize-client-error";
 import { useMutation, useQuery } from "convex/react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -74,7 +75,7 @@ export function CommunityCategoryView({ slug }: { slug: string }) {
       setBody("");
       router.push(`/community/t/${threadId}`);
     } catch (submitError) {
-      setError(submitError instanceof Error ? submitError.message : "Unable to create thread.");
+      setError(normalizeClientErrorMessage(submitError, "Unable to create thread."));
     } finally {
       setIsSubmitting(false);
     }

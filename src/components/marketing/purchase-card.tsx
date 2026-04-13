@@ -5,6 +5,7 @@ import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import { authConfig } from "@/lib/config/auth";
 import { siteConfig } from "@/lib/config/site";
+import { normalizeClientErrorMessage } from "@/lib/errors/normalize-client-error";
 import { api } from "../../../convex/_generated/api";
 import { useAction, useConvexAuth } from "convex/react";
 import Link from "next/link";
@@ -27,7 +28,7 @@ export function PurchaseCard() {
       });
       window.location.href = result.url;
     } catch (cause) {
-      setError(cause instanceof Error ? cause.message : "Unable to start checkout.");
+      setError(normalizeClientErrorMessage(cause, "Unable to start checkout."));
     } finally {
       setLoading(null);
     }
@@ -44,9 +45,9 @@ export function PurchaseCard() {
         window.location.href = result.url;
         return;
       }
-      setError(result.message);
+      setError(normalizeClientErrorMessage(result.message, "Crypto checkout is unavailable."));
     } catch (cause) {
-      setError(cause instanceof Error ? cause.message : "Crypto checkout is unavailable.");
+      setError(normalizeClientErrorMessage(cause, "Crypto checkout is unavailable."));
     } finally {
       setLoading(null);
     }

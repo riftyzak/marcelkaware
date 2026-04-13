@@ -7,6 +7,7 @@ import { Input } from "@/components/ui/input";
 import { PageIntro } from "@/components/ui/page-intro";
 import { StateCard } from "@/components/ui/state-card";
 import { Textarea } from "@/components/ui/textarea";
+import { normalizeClientErrorMessage } from "@/lib/errors/normalize-client-error";
 import { useAction, useMutation, useQuery } from "convex/react";
 import Link from "next/link";
 import { useEffect, useState } from "react";
@@ -75,7 +76,7 @@ export function AdminResellerDetail({ slug }: { slug: string }) {
         notes: notes.trim() || undefined,
       });
     } catch (cause) {
-      setError(cause instanceof Error ? cause.message : "Unable to save reseller.");
+      setError(normalizeClientErrorMessage(cause, "Unable to save reseller."));
     } finally {
       setSavePending(false);
     }
@@ -104,7 +105,7 @@ export function AdminResellerDetail({ slug }: { slug: string }) {
       setExpiresAt("");
       setBatchNote("");
     } catch (cause) {
-      setError(cause instanceof Error ? cause.message : "Unable to generate batch.");
+      setError(normalizeClientErrorMessage(cause, "Unable to generate batch."));
     } finally {
       setBatchPending(false);
     }

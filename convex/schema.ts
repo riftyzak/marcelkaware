@@ -165,9 +165,15 @@ export default defineSchema({
   })
     .index("reference", ["reference"])
     .index("userId", ["userId"]),
+  supportState: defineTable({
+    key: v.string(),
+    nextPublicTicketNumber: v.number(),
+    backfillCompletedAt: v.optional(v.number()),
+  }).index("by_key", ["key"]),
   tickets: defineTable({
     userId: v.id("users"),
     createdByUserId: v.id("users"),
+    publicTicketNumber: v.optional(v.number()),
     subject: v.string(),
     status: v.union(
       v.literal("open"),
@@ -182,6 +188,15 @@ export default defineSchema({
       v.literal("technical"),
       v.literal("billing"),
       v.literal("account"),
+    ),
+    department: v.optional(
+      v.union(
+        v.literal("technicalQuestions"),
+        v.literal("accountRecovery"),
+        v.literal("emailChange"),
+        v.literal("unbanRequest"),
+        v.literal("other"),
+      ),
     ),
     assignedToUserId: v.optional(v.id("users")),
     latestReplyAt: v.number(),
@@ -234,6 +249,8 @@ export default defineSchema({
   })
     .index("userId", ["userId"])
     .index("status", ["status"])
+    .index("publicTicketNumber", ["publicTicketNumber"])
+    .index("department", ["department"])
     .index("assignedToUserId", ["assignedToUserId"])
     .index("latestReplyAt", ["latestReplyAt"]),
   ticketReplies: defineTable({
@@ -248,10 +265,61 @@ export default defineSchema({
       v.literal("admin"),
     ),
     body: v.string(),
+    bodyHtml: v.optional(v.string()),
+    bodyFormat: v.optional(v.union(v.literal("plainText"), v.literal("richText"))),
     isInternalNote: v.boolean(),
     createdAt: v.number(),
   })
     .index("ticketId", ["ticketId"])
+    .index("authorUserId", ["authorUserId"]),
+  guestTickets: defineTable({
+    publicTicketNumber: v.number(),
+    guestName: v.string(),
+    guestEmail: v.string(),
+    subject: v.string(),
+    department: v.union(
+      v.literal("technicalQuestions"),
+      v.literal("accountRecovery"),
+      v.literal("emailChange"),
+      v.literal("unbanRequest"),
+      v.literal("other"),
+    ),
+    priority: v.union(v.literal("normal"), v.literal("high")),
+    status: v.union(
+      v.literal("open"),
+      v.literal("staffWaiting"),
+      v.literal("userWaiting"),
+      v.literal("resolved"),
+      v.literal("closed"),
+    ),
+    assignedToUserId: v.optional(v.id("users")),
+    latestReplyAt: v.number(),
+    latestReplyByType: v.union(v.literal("guest"), v.literal("staff")),
+    latestReplyByUserId: v.optional(v.id("users")),
+    accessPasswordHash: v.string(),
+    visibleToStaff: v.boolean(),
+    closedAt: v.optional(v.number()),
+    closedByUserId: v.optional(v.id("users")),
+    reopenedAt: v.optional(v.number()),
+    createdAt: v.number(),
+    updatedAt: v.number(),
+  })
+    .index("publicTicketNumber", ["publicTicketNumber"])
+    .index("status", ["status"])
+    .index("department", ["department"])
+    .index("assignedToUserId", ["assignedToUserId"])
+    .index("latestReplyAt", ["latestReplyAt"]),
+  guestTicketReplies: defineTable({
+    guestTicketId: v.id("guestTickets"),
+    authorType: v.union(v.literal("guest"), v.literal("supportStaff"), v.literal("admin")),
+    authorUserId: v.optional(v.id("users")),
+    body: v.string(),
+    bodyHtml: v.optional(v.string()),
+    bodyFormat: v.optional(v.union(v.literal("plainText"), v.literal("richText"))),
+    isInternalNote: v.boolean(),
+    createdAt: v.number(),
+  })
+    .index("guestTicketId", ["guestTicketId"])
     .index("authorUserId", ["authorUserId"]),
   forumCategories: defineTable({
     slug: v.string(),

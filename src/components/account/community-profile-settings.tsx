@@ -6,6 +6,7 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { StateCard } from "@/components/ui/state-card";
 import { Breadcrumbs } from "@/components/ui/breadcrumbs";
+import { normalizeClientErrorMessage } from "@/lib/errors/normalize-client-error";
 import { buildCommunityProfilePath } from "../../../shared/forum";
 import { useMutation, useQuery } from "convex/react";
 import Link from "next/link";
@@ -74,7 +75,7 @@ export function CommunityProfileSettings() {
       });
       setSuccess("Profile updated.");
     } catch (submitError) {
-      setError(submitError instanceof Error ? submitError.message : "Unable to update profile.");
+      setError(normalizeClientErrorMessage(submitError, "Unable to update profile."));
     } finally {
       setSaving(false);
     }

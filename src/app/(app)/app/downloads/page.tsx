@@ -1,5 +1,5 @@
-import { DownloadsPanel } from "@/components/dashboard/downloads-panel";
+import { redirect } from "next/navigation";
 
 export default function DownloadsPage() {
-  return <DownloadsPanel />;
+  redirect("/downloads");
 }

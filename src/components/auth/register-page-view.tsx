@@ -5,6 +5,7 @@ import Link from "next/link";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { AuthAlert } from "@/components/auth/auth-alert";
+import { normalizeAuthErrorMessage } from "@/components/auth/normalize-auth-error";
 import { AuthPageShell } from "@/components/auth/auth-page-shell";
 import { RecaptchaDisclosure } from "@/components/auth/recaptcha-disclosure";
 import { useRecaptchaV3 } from "@/components/auth/recaptcha-v3";
@@ -58,7 +59,7 @@ export function RegisterPageView() {
         router.push(nextPath);
       }
     } catch (cause) {
-      setError(cause instanceof Error ? cause.message : "Unable to create account.");
+      setError(normalizeAuthErrorMessage(cause, "Unable to create account."));
     } finally {
       setPending(false);
     }

@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { PageIntro } from "@/components/ui/page-intro";
 import { StateCard } from "@/components/ui/state-card";
+import { normalizeClientErrorMessage } from "@/lib/errors/normalize-client-error";
 import { useMutation, useQuery } from "convex/react";
 import Link from "next/link";
 import { useState } from "react";
@@ -56,7 +57,7 @@ export function AdminHomepageBlocksManager() {
       setError(null);
       await setPublished({ blockId: blockId as any, published });
     } catch (cause) {
-      setError(cause instanceof Error ? cause.message : "Unable to update homepage block.");
+      setError(normalizeClientErrorMessage(cause, "Unable to update homepage block."));
     } finally {
       setPendingId(null);
     }
@@ -79,7 +80,7 @@ export function AdminHomepageBlocksManager() {
       setError(null);
       await reorderBlocks({ orderedIds: orderedIds as any });
     } catch (cause) {
-      setError(cause instanceof Error ? cause.message : "Unable to reorder homepage blocks.");
+      setError(normalizeClientErrorMessage(cause, "Unable to reorder homepage blocks."));
     } finally {
       setReordering(false);
     }
